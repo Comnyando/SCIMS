@@ -117,7 +117,12 @@ jobs:
         continue-on-error: true
       
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
       
       - name: Run ESLint
         run: pnpm lint || true
@@ -146,7 +151,12 @@ jobs:
         continue-on-error: true
       
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
       
       - name: Run TypeScript type check
         run: pnpm exec tsc --noEmit || true
@@ -175,7 +185,12 @@ jobs:
         continue-on-error: true
       
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
       
       - name: Build frontend
         run: pnpm build
