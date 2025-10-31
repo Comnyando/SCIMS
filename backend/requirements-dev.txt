@@ -7,7 +7,7 @@ ruff==0.6.9
 
 # Type checking
 mypy==1.11.1
-types-redis==4.6.0.20241208
+types-redis==4.6.0.20241004
 
 # Testing
 pytest==8.3.3

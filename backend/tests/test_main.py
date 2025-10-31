@@ -24,11 +24,13 @@ def test_read_root():
     assert data["status"] == "ok"
     assert "app" in data
     assert data["app"] == "SCIMS"
+    assert "api" in data
+    assert data["api"] == "v1"
 
 
-def test_api_health_check():
-    """Test API health check endpoint."""
-    response = client.get("/api/v1/health")
+def test_health_check():
+    """Test health check endpoint."""
+    response = client.get("/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"

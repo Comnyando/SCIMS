@@ -93,37 +93,36 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 1.1: Database Schema & Migrations
 
 **Tasks:**
-- [ ] Setup Alembic for database migrations
-- [ ] Create initial migration for:
+- [x] Setup Alembic for database migrations
+- [x] Create initial migration for:
   - users table
   - organizations table
   - organization_members table
-- [ ] Create SQLAlchemy models:
+- [x] Create SQLAlchemy models:
   - User model
   - Organization model
   - OrganizationMember model
-- [ ] Create Pydantic schemas for validation
-- [ ] Setup database connection pooling
-- [ ] Create seed data script (test users, orgs)
-- [ ] Test migrations up/down
-- [ ] Update backend/README.md with database setup and migration instructions
-- [ ] Document database schema in docs/development/database-schema.md
+- [x] Create Pydantic schemas for validation
+- [x] Setup database connection pooling
+- [x] Create seed data script (test users, orgs)
+- [x] Test migrations up/down
+- [x] Update backend/README.md with database setup and migration instructions
+- [x] Document database schema in docs/development/database-schema.md
 
 ### Sub-phase 1.2: Authentication System
 
 **Tasks:**
-- [ ] Implement password hashing (bcrypt)
-- [ ] Create authentication endpoints:
+- [x] Implement password hashing (bcrypt)
+- [x] Create authentication endpoints:
   - POST /api/v1/auth/register
   - POST /api/v1/auth/login
   - POST /api/v1/auth/refresh
   - GET /api/v1/auth/me
-- [ ] Implement JWT token generation/validation
-- [ ] Create authentication middleware/dependencies
-- [ ] Setup CORS configuration
-- [ ] Create basic RBAC (roles: owner, admin, member, viewer)
-- [ ] Write unit tests for authentication
-- [ ] Test authentication flow with Postman/curl
+- [x] Implement JWT token generation/validation
+- [x] Create authentication middleware/dependencies
+- [x] Setup CORS configuration
+- [x] Create basic RBAC (roles: owner, admin, member, viewer)
+- [x] Write unit tests for authentication
 
 ---
 

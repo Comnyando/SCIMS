@@ -30,6 +30,10 @@ COPY --from=dependencies /usr/local/bin /usr/local/bin
 # Copy application code
 COPY app ./app
 
+# Copy Alembic configuration for migrations
+COPY alembic.ini ./
+COPY alembic ./alembic
+
 # Create non-root user for security
 RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
@@ -47,6 +51,10 @@ FROM dependencies as development
 
 # Copy application code
 COPY app ./app
+
+# Copy Alembic configuration
+COPY alembic.ini ./
+COPY alembic ./alembic
 
 EXPOSE 8000
 
