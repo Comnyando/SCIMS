@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column('id', postgresql.UUID(as_uuid=False), nullable=False, comment='Unique identifier (UUID)'),
         sa.Column('email', sa.String(length=255), nullable=False, comment='User email address (unique, used for login)'),
         sa.Column('username', sa.String(length=100), nullable=True, comment='Optional username for display'),
-        sa.Column('hashed_password', sa.String(length=255), nullable=True, comment='Bcrypt/Argon2 hashed password (nullable for OAuth users)'),
+        sa.Column('hashed_password', sa.String(length=255), nullable=True, comment='Argon2 hashed password (nullable for OAuth users)'),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true', comment='Whether the user account is active'),
         sa.Column('is_verified', sa.Boolean(), nullable=False, server_default='false', comment='Whether the user email has been verified'),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False, comment='Timestamp when the record was created'),

@@ -2,25 +2,25 @@
 Security utilities for password hashing and JWT token management.
 
 This module provides functions for:
-- Password hashing and verification (bcrypt)
+- Password hashing and verification (Argon2)
 - JWT token generation and validation
 - Token payload creation and parsing
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, cast
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from app.config import settings
 
-# Password hashing context using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing context using Argon2
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
     """
-    Hash a plain text password using bcrypt.
+    Hash a plain text password using Argon2.
 
     Args:
         password: Plain text password to hash
@@ -61,11 +61,17 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
     to_encode = data.copy()
 
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.jwt_access_token_expire_minutes)
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.jwt_access_token_expire_minutes
+        )
 
-    to_encode.update({"exp": expire, "type": "access"})
+    # Convert datetime to Unix timestamp (seconds since epoch)
+    # JWT spec requires exp to be a NumericDate (integer)
+    # Using timestamp() method which works directly with timezone-aware datetimes
+    expire_timestamp = int(expire.timestamp())
+    to_encode.update({"exp": expire_timestamp, "type": "access"})
     encoded_jwt = jwt.encode(to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm)
     return cast(str, encoded_jwt)
 
@@ -84,9 +90,13 @@ def create_refresh_token(data: Dict[str, Any]) -> str:
         Encoded JWT refresh token string
     """
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=settings.jwt_refresh_token_expire_days)
+    expire = datetime.now(timezone.utc) + timedelta(days=settings.jwt_refresh_token_expire_days)
 
-    to_encode.update({"exp": expire, "type": "refresh"})
+    # Convert datetime to Unix timestamp (seconds since epoch)
+    # JWT spec requires exp to be a NumericDate (integer)
+    # Using timestamp() method which works directly with timezone-aware datetimes
+    expire_timestamp = int(expire.timestamp())
+    to_encode.update({"exp": expire_timestamp, "type": "refresh"})
     encoded_jwt = jwt.encode(to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm)
     return cast(str, encoded_jwt)
 

@@ -96,9 +96,9 @@ async def register(
             detail="Registration failed. Email or username may already be in use.",
         )
 
-    # Create tokens
-    access_token = create_access_token(data={"sub": new_user.id, "email": new_user.email})
-    refresh_token = create_refresh_token(data={"sub": new_user.id})
+    # Create tokens (convert UUID to string for JWT)
+    access_token = create_access_token(data={"sub": str(new_user.id), "email": new_user.email})
+    refresh_token = create_refresh_token(data={"sub": str(new_user.id)})
 
     return RegisterResponse(
         access_token=access_token,
@@ -153,9 +153,9 @@ async def login(
             detail="User account is inactive",
         )
 
-    # Create tokens
-    access_token = create_access_token(data={"sub": user.id, "email": user.email})
-    refresh_token = create_refresh_token(data={"sub": user.id})
+    # Create tokens (convert UUID to string for JWT)
+    access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
+    refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     return LoginResponse(
         access_token=access_token,

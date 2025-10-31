@@ -25,7 +25,7 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     Fields are designed to be flexible and extensible:
     - email: Used for authentication and communication
     - username: Optional display name (can be added later)
-    - hashed_password: Bcrypt/Argon2 hashed password (nullable for OAuth users)
+           - hashed_password: Argon2 hashed password (nullable for OAuth users)
     - is_active: Soft delete flag
     - is_verified: Email verification status
 
@@ -61,7 +61,7 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     hashed_password: Mapped[Optional[str]] = mapped_column(
         String(255),
         nullable=True,
-        comment="Bcrypt/Argon2 hashed password (nullable for OAuth users)",
+        comment="Argon2 hashed password (nullable for OAuth users)",
     )
 
     is_active: Mapped[bool] = mapped_column(

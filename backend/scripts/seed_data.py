@@ -24,12 +24,12 @@ from app.models import Base, User, Organization, OrganizationMember
 from passlib.context import CryptContext
 
 # Password hashing context
-# Note: You'll need to install passlib and bcrypt: pip install passlib[bcrypt]
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Note: You'll need to install passlib and argon2: pip install passlib[argon2]
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    """Hash a password using bcrypt."""
+    """Hash a password using Argon2."""
     return pwd_context.hash(password)
 
 
