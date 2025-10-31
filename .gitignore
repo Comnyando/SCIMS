@@ -1,0 +1,96 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+/build/
+/dist/
+/.next/
+/out/
+/.turbo/
+/.cache/
+
+# Vite
+.vite/
+vite.config.*.timestamp-*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.venv/
+venv/
+env/
+ENV/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log
+
+# Env files
+.env
+.env.*
+!.env.example
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+.cursor/
+
+# Coverage
+coverage/
+
+# Misc
+.tmp/
+*.local
+*.localai
+!Holocron.localai
+
+# Docker
+docker-compose.override.yml
+*.pid
+*.seed
+
+# Database
+*.sql
+*.dump
+*.backup
+*.pgsql
+*.rdb
+
+# SSL Certificates (keep example, ignore actual certs)
+*.key
+*.pem
+*.crt
+*.cert
+!*.example.*
+!.gitkeep
