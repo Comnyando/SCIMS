@@ -7,3 +7,6 @@ pydantic-settings==2.5.2
 python-dotenv==1.0.1
 redis==5.0.8
 celery==5.4.0
+
+# Development dependencies (optional)
+# Install with: pip install -r requirements-dev.txt

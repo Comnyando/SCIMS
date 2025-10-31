@@ -78,12 +78,12 @@ This document provides a detailed, week-by-week implementation plan with actiona
 ### Week 2 (continued): Basic CI/CD
 
 **Tasks:**
-- [ ] Create .github/workflows/ci.yml:
+- [x] Create .github/workflows/ci.yml:
   - Linting (Black for Python, ESLint for TypeScript)
   - Type checking (mypy, TypeScript)
   - Basic tests (placeholder)
   - Docker image building
-- [ ] Setup pre-commit hooks (optional but recommended)
+- [x] Setup pre-commit hooks (optional but recommended)
 - [ ] Test CI pipeline on GitHub
 
 ---
