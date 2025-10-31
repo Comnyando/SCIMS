@@ -73,7 +73,6 @@ coverage/
 .tmp/
 *.local
 *.localai
-!Holocron.localai
 
 # Docker
 docker-compose.override.yml
