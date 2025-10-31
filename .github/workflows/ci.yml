@@ -113,7 +113,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: './frontend/pnpm-lock.yaml'
+          cache-dependency-path: 'frontend/pnpm-lock.yaml'
+        continue-on-error: true
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -141,7 +142,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: './frontend/pnpm-lock.yaml'
+          cache-dependency-path: 'frontend/pnpm-lock.yaml'
+        continue-on-error: true
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -169,7 +171,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: './frontend/pnpm-lock.yaml'
+          cache-dependency-path: 'frontend/pnpm-lock.yaml'
+        continue-on-error: true
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
