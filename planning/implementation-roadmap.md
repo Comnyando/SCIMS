@@ -1,13 +1,13 @@
 # Implementation Roadmap
 ## Star Citizen Inventory Management System
 
-This document provides a detailed, week-by-week implementation plan with actionable tasks.
+This document provides a detailed, phase-by-phase implementation plan with actionable tasks. Tasks are organized by phases and sub-phases to allow flexible scheduling without time constraints.
 
 ---
 
 ## Phase 0: Foundation Setup
 
-### Week 1: Repository & Project Structure
+### Sub-phase 0.1: Repository & Project Structure
 
 **Tasks:**
 - [x] Create GitHub repository
@@ -52,7 +52,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [x] Create docs/ directory structure
 - [x] Create root README.md with comprehensive setup instructions
 
-### Week 2: Docker & Development Environment
+### Sub-phase 0.2: Docker & Development Environment
 
 **Tasks:**
 - [x] Create docker-compose.yml with services:
@@ -75,7 +75,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [x] Create docs/getting-started/installation.md
 - [x] Update root README.md with Docker setup instructions
 
-### Week 2 (continued): Basic CI/CD
+### Sub-phase 0.3: Basic CI/CD
 
 **Tasks:**
 - [x] Create .github/workflows/ci.yml:
@@ -84,13 +84,13 @@ This document provides a detailed, week-by-week implementation plan with actiona
   - Basic tests (placeholder)
   - Docker image building
 - [x] Setup pre-commit hooks (optional but recommended)
-- [ ] Test CI pipeline on GitHub
+- [x] Test CI pipeline on GitHub
 
 ---
 
 ## Phase 1: Core Backend & Authentication
 
-### Week 3: Database Schema & Migrations
+### Sub-phase 1.1: Database Schema & Migrations
 
 **Tasks:**
 - [ ] Setup Alembic for database migrations
@@ -109,7 +109,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Update backend/README.md with database setup and migration instructions
 - [ ] Document database schema in docs/development/database-schema.md
 
-### Week 4: Authentication System
+### Sub-phase 1.2: Authentication System
 
 **Tasks:**
 - [ ] Implement password hashing (bcrypt)
@@ -129,7 +129,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 2: Inventory Core
 
-### Week 5: Items & Locations Backend
+### Sub-phase 2.1: Items & Locations Backend
 
 **Tasks:**
 - [ ] Create database migrations for:
@@ -153,7 +153,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
   - DELETE /api/v1/locations/{location_id}
 - [ ] Write tests for Items and Locations APIs
 
-### Week 6: Inventory Management & Frontend
+### Sub-phase 2.2: Inventory Management & Frontend
 
 **Tasks:**
 - [ ] Implement Inventory API:
@@ -182,7 +182,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 3: Planning & Crafting
 
-### Week 7: Recipes System
+### Sub-phase 3.1: Recipes System
 
 **Tasks:**
 - [ ] Create database migration for recipes table
@@ -204,7 +204,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Update docs/user-guide/crafting.md with recipe and craft management
 - [ ] Update root README.md with crafting features
 
-### Week 8: Crafts Management Backend
+### Sub-phase 3.2: Crafts Management Backend
 
 **Tasks:**
 - [ ] Create database migrations for:
@@ -225,7 +225,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Create Celery task for automated craft completion (timed)
 - [ ] Write tests for Crafts API
 
-### Week 9: Crafts Management Frontend
+### Sub-phase 3.3: Crafts Management Frontend
 
 **Tasks:**
 - [ ] Create Craft queue page
@@ -243,7 +243,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 4: Optimization Engine
 
-### Week 10: Source Tracking System
+### Sub-phase 4.1: Source Tracking System
 
 **Tasks:**
 - [ ] Create database migrations for:
@@ -260,7 +260,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Create source verification workflow
 - [ ] Write tests
 
-### Week 11: Optimization Algorithms
+### Sub-phase 4.2: Optimization Algorithms
 
 **Tasks:**
 - [ ] Design optimization algorithm:
@@ -278,7 +278,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Document optimization algorithms and source finding logic
 - [ ] Add examples of optimization usage
 
-### Week 12: Optimization Frontend
+### Sub-phase 4.3: Optimization Frontend
 
 **Tasks:**
 - [ ] Create optimization results display component
@@ -296,7 +296,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 5: Goals & Analytics
 
-### Week 13: Goals System
+### Sub-phase 5.1: Goals System
 
 **Tasks:**
 - [ ] Create database migration for goals table
@@ -316,7 +316,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Add in-app guided tour steps for goals
 - [ ] Update docs/user-guide/goals.md with usage
 
-### Week 14: Analytics Foundation
+### Sub-phase 5.2: Analytics Foundation
 
 **Tasks:**
 - [ ] Create database migrations for:
@@ -343,7 +343,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 6: Integration고ramework
 
-### Week 15: Integration Service Backend
+### Sub-phase 6.1: Integration Service Backend
 
 **Tasks:**
 - [ ] Create database migrations for:
@@ -363,7 +363,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Create integration framework (base class for integrations)
 - [ ] Write tests
 
-### Week 16: Data Import/Export & Frontend
+### Sub-phase 6.2: Data Import/Export & Frontend
 
 **Tasks:**
 - [ ] Implement CSV import/export:
@@ -386,9 +386,9 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ---
 
-## Phase 6.5: Public Commons & Moderation (2 weeks)
+## Phase 6.5: Public Commons & Moderation
 
-### Week X1: Commons Backend & Public Endpoints
+### Sub-phase 6.3: Commons Backend & Public Endpoints
 
 **Tasks:**
 - [ ] Create database migrations:
@@ -409,7 +409,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Write backend tests for workflows (submit → approve → publish)
 - [ ] Update docs: data model, API endpoints, moderation lifecycle
 
-### Week X2: Commons Admin Frontend & UX
+### Sub-phase 6.4: Commons Admin Frontend & UX
 
 **Tasks:**
 - [ ] Build Moderation Dashboard (queue, filters, bulk actions)
@@ -426,7 +426,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 
 ## Phase 7: Polish & Production Readiness
 
-### Week 17: Comprehensive Testing
+### Sub-phase 7.1: Comprehensive Testing
 
 **Tasks:**
 - [ ] Achieve >80% backend test coverage
@@ -440,7 +440,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Document testing procedures
 - [ ] Test in-app onboarding/tutorial flows end-to-end
 
-### Week 18: Documentation
+### Sub-phase 7.2: Documentation
 
 **Tasks:**
 - [ ] Complete OpenAPI/Swagger documentation
@@ -465,7 +465,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Add email provider setup guide: SPF/DKIM/DMARC, webhooks, env vars
 - [ ] Add Public Commons documentation: submission, moderation, publishing, takedown
 
-### Week 19: Security & Performance
+### Sub-phase 7.3: Security & Performance
 
 **Tasks:**
 - [ ] Security audit:
@@ -485,7 +485,7 @@ This document provides a detailed, week-by-week implementation plan with actiona
 - [ ] Validate email bounces/complaints webhook and suppression list behavior
 - [ ] Validate backup/restore drill in staging (weekly automated restore)
 
-### Week 20: Production Deployment
+### Sub-phase 7.4: Production Deployment
 
 **Tasks:**
 - [ ] Create production docker-compose configuration
