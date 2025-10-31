@@ -24,7 +24,7 @@ def read_root():
         "status": "ok",
         "app": settings.app_name,
         "environment": settings.environment,
-        "version": "0.1.0"
+        "version": "0.1.0",
     }
 
 
@@ -35,7 +35,7 @@ def read_api_root():
         "app": settings.app_name,
         "environment": settings.environment,
         "version": "0.1.0",
-        "api": "v1"
+        "api": "v1",
     }
 
 

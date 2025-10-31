@@ -94,3 +94,6 @@ docker-compose.override.yml
 *.cert
 !*.example.*
 !.gitkeep
+
+# CI/CD build outputs
+frontend/dist/
