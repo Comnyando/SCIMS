@@ -56,8 +56,11 @@ The backend will be available at `http://localhost:8000` and auto-reloads on cod
 
 5. **Run database migrations:**
    ```bash
-   # When migrations are created:
+   # Apply all pending migrations
    alembic upgrade head
+   
+   # (Optional) Seed the database with test data
+   python scripts/seed_data.py
    ```
 
 6. **Start the development server:**
@@ -139,25 +142,200 @@ When the backend is running, interactive documentation is available:
 
 ## Database Management
 
-### Migrations with Alembic
+### Running Migrations
 
+The project uses Alembic for database migrations. All migration files are stored in `alembic/versions/`.
+
+#### Initial Setup
+
+**Option 1: Using Docker (Recommended)**
+
+1. **Ensure Docker containers are running:**
+   ```bash
+   docker compose up -d db
+   ```
+
+2. **Apply all migrations:**
+   ```bash
+   # From project root
+   docker compose exec backend alembic upgrade head
+   
+   # Or use the helper script (PowerShell)
+   .\backend\scripts\run_migrations.ps1 upgrade head
+   
+   # Or use the helper script (Bash)
+   ./backend/scripts/run_migrations.sh upgrade head
+   ```
+   
+   **Note:** If you get "alembic: command not found", rebuild the container:
+   ```bash
+   docker compose build backend
+   ```
+
+3. **(Optional) Seed test data:**
+   ```bash
+   docker compose exec backend python scripts/seed_data.py
+   ```
+
+**Option 2: Local Development**
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Apply all migrations:**
+   ```bash
+   alembic upgrade head
+   ```
+
+3. **(Optional) Seed test data:**
+   ```bash
+   python scripts/seed_data.py
+   ```
+   
+This creates:
+- 4 test users (admin, owner, member, viewer)
+- 2 test organizations
+- Sample memberships
+
+#### Common Migration Commands
+
+**Using Docker:**
 ```bash
-# Create a new migration
+# Apply all pending migrations
+docker compose exec backend alembic upgrade head
+
+# Create a new migration (after modifying models)
+docker compose exec backend alembic revision --autogenerate -m "Description of changes"
+
+# View migration history
+docker compose exec backend alembic history
+
+# Show current database revision
+docker compose exec backend alembic current
+
+# Rollback one migration
+docker compose exec backend alembic downgrade -1
+
+# Or use helper scripts (from project root):
+.\backend\scripts\run_migrations.ps1 upgrade head
+.\backend\scripts\run_migrations.ps1 current
+.\backend\scripts\run_migrations.ps1 history
+```
+
+**Note:** If you get "alembic: command not found", the container needs to be rebuilt to include Alembic:
+```bash
+docker compose build backend
+```
+
+**Local Development:**
+```bash
+# Create a new migration (after modifying models)
 alembic revision --autogenerate -m "Description of changes"
 
-# Apply migrations
+# Apply all pending migrations
 alembic upgrade head
+
+# Apply migrations to a specific revision
+alembic upgrade <revision_id>
 
 # Rollback one migration
 alembic downgrade -1
 
+# Rollback to a specific revision
+alembic downgrade <revision_id>
+
 # View migration history
 alembic history
+
+# Show current database revision
+alembic current
+
+# Show pending migrations
+alembic heads
 ```
 
-### Database Connection
+#### Creating Migrations
 
-The database connection is managed in `app/database.py` using SQLAlchemy's async engine and session management.
+After modifying SQLAlchemy models:
+
+1. **Auto-generate migration:**
+   ```bash
+   alembic revision --autogenerate -m "Add new field to User model"
+   ```
+
+2. **Review the generated migration** in `alembic/versions/`:
+   - Check that all changes are correct
+   - Add data migrations if needed (e.g., backfilling new fields)
+   - Ensure downgrade() properly reverses the changes
+
+3. **Test the migration:**
+   ```bash
+   # Apply migration
+   alembic upgrade head
+   
+   # Test rollback
+   alembic downgrade -1
+   
+   # Re-apply
+   alembic upgrade head
+   ```
+
+#### Migration Best Practices
+
+- **Never edit existing migration files** that have been applied to production
+- **Always test migrations** up and down before committing
+- **Review auto-generated migrations** - Alembic may not detect all changes
+- **Use descriptive migration messages** that explain what changed and why
+- **Include data migrations** if schema changes require data transformations
+
+### Database Connection & Connection Pooling
+
+The database connection is managed in `app/database.py` using SQLAlchemy 2.0 with connection pooling.
+
+**Connection Pool Configuration:**
+- `pool_size`: 5 connections (maintained in pool)
+- `max_overflow`: 10 additional connections (beyond pool_size)
+- `pool_timeout`: 30 seconds (wait time for connection)
+- `pool_recycle`: 3600 seconds (recycle connections after 1 hour)
+- `pool_pre_ping`: Enabled (verify connections before use)
+
+These settings balance performance and resource usage. They can be adjusted in `app/database.py` or made configurable via environment variables in the future.
+
+**Using Database Sessions in FastAPI:**
+
+```python
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
+```
+
+### Seeding Development Data
+
+The seed script (`scripts/seed_data.py`) creates sample data for development:
+
+**Test Users:**
+- `admin@scims.test` / `admin123` (admin role)
+- `owner@scims.test` / `owner123` (owner role)
+- `member@scims.test` / `member123` (member role)
+- `viewer@scims.test` / `viewer123` (viewer role)
+
+**Test Organizations:**
+- Test Organization (slug: `test-org`)
+- Another Organization (slug: `another-org`)
+
+Run the seed script:
+```bash
+python scripts/seed_data.py
+```
+
+**Note:** The seed script is idempotent - it will skip existing records, so it's safe to run multiple times.
 
 ## Testing
 
