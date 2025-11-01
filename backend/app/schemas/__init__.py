@@ -55,6 +55,13 @@ from app.schemas.canonical_location import (
     CanonicalLocationUpdate,
     CanonicalLocationResponse,
 )
+from app.schemas.inventory import (
+    InventoryStock,
+    InventoryAdjust,
+    InventoryTransfer,
+    InventoryHistory,
+    StockReservation,
+)
 
 __all__ = [
     # User schemas
@@ -100,4 +107,10 @@ __all__ = [
     "CanonicalLocationCreate",
     "CanonicalLocationUpdate",
     "CanonicalLocationResponse",
+    # Inventory schemas
+    "InventoryStock",
+    "InventoryAdjust",
+    "InventoryTransfer",
+    "InventoryHistory",
+    "StockReservation",
 ]

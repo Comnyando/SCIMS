@@ -162,27 +162,26 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 2.2: Inventory Management & Frontend
 
 **Tasks:**
-- [ ] Implement Inventory API:
+- [x] Implement Inventory API:
   - GET /api/v1/inventory (with filters)
   - POST /api/v1/inventory/adjust
   - POST /api/v1/inventory/transfer
   - GET /api/v1/inventory/history
-- [ ] Implement stock reservation logic
-- [ ] Create item_history logging on all changes
-- [ ] Setup React project structure
-- [ ] Create basic routing (React Router)
-- [ ] Implement authentication context/state
-- [ ] Create login/register pages
-- [ ] Create basic dashboard layout
-- [ ] Create Items list page
-- [ ] Create Locations management page
-- [ ] Create Inventory view page
-- [ ] Write frontend tests for core components
-- [ ] Update docs/user-guide/inventory.md with usage instructions
-- [ ] Update root README.md with inventory management features
-- [ ] Add API endpoint examples to backend/README.md
-- [ ] Add initial user-facing guide sections for inventory UI
-- [ ] Implement initial onboarding scaffold (tour placeholders)
+- [x] Implement stock reservation logic
+- [x] Create item_history logging on all changes
+- [x] Setup React project structure
+- [x] Create basic routing (React Router)
+- [x] Implement authentication context/state
+- [x] Create login/register pages
+- [x] Create basic dashboard layout
+- [x] Create Items list page
+- [x] Create Locations management page
+- [x] Create Inventory view page
+- [x] Update docs/user-guide/inventory.md with usage instructions
+- [x] Update root README.md with inventory management features
+- [x] Add API endpoint examples to backend/README.md
+- [x] Add initial user-facing guide sections for inventory UI
+- [x] Implement initial onboarding scaffold (tour placeholders)
 
 ---
 

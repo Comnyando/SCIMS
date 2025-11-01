@@ -82,8 +82,10 @@ async def list_locations(
         None, description="Filter by owner type: user, organization, ship"
     ),
     owner_id: Optional[str] = Query(None, description="Filter by owner ID"),
-    location_type: Optional[str] = Query(None, description="Filter by location type"),
+    type: Optional[str] = Query(None, alias="location_type", description="Filter by location type"),
+    location_type: Optional[str] = Query(None, description="Filter by location type (deprecated, use 'type')"),
     parent_location_id: Optional[str] = Query(None, description="Filter by parent location ID"),
+    search: Optional[str] = Query(None, description="Search term for location name"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -100,10 +102,15 @@ async def list_locations(
         query = query.filter(Location.owner_type == owner_type)
     if owner_id:
         query = query.filter(Location.owner_id == owner_id)
-    if location_type:
-        query = query.filter(Location.type == location_type)
+    # Support both 'type' and 'location_type' for backwards compatibility
+    location_type_filter = type or location_type
+    if location_type_filter:
+        query = query.filter(Location.type == location_type_filter)
     if parent_location_id:
         query = query.filter(Location.parent_location_id == parent_location_id)
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(Location.name.ilike(search_pattern))
 
     # Filter to only accessible locations
     # Canonical locations are always accessible (public read)

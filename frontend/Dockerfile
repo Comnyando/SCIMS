@@ -10,10 +10,14 @@ RUN npm install -g pnpm@9.12.2 && \
     pnpm --version
 
 # Copy package files
-COPY package.json ./
+COPY package.json package-lock.json* pnpm-lock.yaml* ./
 
-# Install dependencies (create lockfile if it doesn't exist)
-RUN pnpm install
+# Install dependencies (use npm if package-lock.json exists, otherwise pnpm)
+RUN if [ -f package-lock.json ]; then \
+      npm install; \
+    else \
+      pnpm install || npm install; \
+    fi
 
 # =============================================================================
 # Stage 2: Build (for production)
@@ -27,10 +31,14 @@ RUN npm install -g pnpm@9.12.2 && \
     pnpm --version
 
 # Copy package files first
-COPY package.json ./
+COPY package.json package-lock.json* pnpm-lock.yaml* ./
 
-# Install dependencies fresh for build stage
-RUN pnpm install
+# Install dependencies fresh for build stage (use npm if package-lock.json exists)
+RUN if [ -f package-lock.json ]; then \
+      npm install; \
+    else \
+      pnpm install || npm install; \
+    fi
 
 # Copy source code (explicitly copy files to avoid issues)
 COPY index.html vite.config.ts tsconfig.json tsconfig.node.json ./
@@ -38,7 +46,7 @@ COPY src ./src
 COPY public ./public
 
 # Build the application
-RUN pnpm build
+RUN npm run build
 
 # =============================================================================
 # Stage 3: Production (serve static files with nginx)
@@ -75,10 +83,14 @@ RUN npm install -g pnpm@9.12.2 && \
     pnpm --version
 
 # Copy package files
-COPY package.json ./
+COPY package.json package-lock.json* pnpm-lock.yaml* ./
 
-# Install dependencies (create lockfile if it doesn't exist)
-RUN pnpm install
+# Install dependencies (use npm if package-lock.json exists, otherwise pnpm)
+RUN if [ -f package-lock.json ]; then \
+      npm install; \
+    else \
+      pnpm install || npm install; \
+    fi
 
 # Copy source code (excluding node_modules which is already installed)
 COPY index.html ./
@@ -89,4 +101,4 @@ COPY public ./public
 
 EXPOSE 5173
 
-CMD ["pnpm", "dev", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
