@@ -16,7 +16,16 @@ from app.database import get_db
 from app.models.base import Base
 
 # Import all models to ensure they're registered with Base.metadata
-from app.models import user, organization, organization_member  # noqa: F401
+from app.models import (  # noqa: F401
+    user,
+    organization,
+    organization_member,
+    location,
+    item,
+    item_stock,
+    item_history,
+    ship,
+)
 
 # Use an in-memory SQLite database for tests
 TEST_DB_PATH = "sqlite:///:memory:"
@@ -30,13 +39,19 @@ def set_sqlite_pragma(dbapi_conn, connection_record):
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
-# Replace UUID types with String for SQLite compatibility
-from sqlalchemy.dialects.postgresql import UUID
+# Replace PostgreSQL-specific types with SQLite-compatible types
+from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import JSON
 
 for table in Base.metadata.tables.values():
     for column in table.columns.values():
         if isinstance(column.type, UUID):
             column.type = String(36)
+        elif isinstance(column.type, JSONB):
+            # Convert JSONB to JSON for SQLite compatibility
+            # Preserve nullable and other column properties
+            jsonb_type = column.type
+            column.type = JSON(none_as_null=jsonb_type.astext_type is not None)
 
 # Create test engine with StaticPool to ensure same connection for :memory: database
 test_engine = create_engine(

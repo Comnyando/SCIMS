@@ -123,7 +123,7 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [x] Setup CORS configuration
 - [x] Create basic RBAC (roles: owner, admin, member, viewer)
 - [x] Write unit tests for authentication
-
+ 
 ---
 
 ## Phase 2: Inventory Core
@@ -131,26 +131,33 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 2.1: Items & Locations Backend
 
 **Tasks:**
-- [ ] Create database migrations for:
+- [x] Create database migrations for:
   - items table
   - locations table
+  - ships table
   - item_stocks table
   - item_history table
-- [ ] Create SQLAlchemy models for all tables
-- [ ] Create Pydantic schemas
-- [ ] Implement Period:
+- [x] Create SQLAlchemy models for all tables (Item, Location, Ship, ItemStock, ItemHistory)
+- [x] Create Pydantic schemas
+- [x] Implement Items API:
   - GET /api/v1/items (list, search, pagination)
   - POST /api/v1/items
   - GET /api/v1/items/{item_id}
   - PATCH /api/v1/items/{item_id}
   - DELETE /api/v1/items/{item_id}
-- [ ] Implement Locations API:
+- [x] Implement Locations API:
   - GET /api/v1/locations
   - POST /api/v1/locations
   - GET /api/v1/locations/{location_id}
   - PATCH /api/v1/locations/{location_id}
   - DELETE /api/v1/locations/{location_id}
-- [ ] Write tests for Items and Locations APIs
+- [x] Implement Ships API:
+  - GET /api/v1/ships
+  - POST /api/v1/ships
+  - GET /api/v1/ships/{ship_id}
+  - PATCH /api/v1/ships/{ship_id} (including moving ships between locations)
+  - DELETE /api/v1/ships/{ship_id}
+- [x] Write tests for Items, Locations, and Ships APIs
 
 ### Sub-phase 2.2: Inventory Management & Frontend
 
@@ -223,6 +230,7 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Implement stock deduction on craft completion
 - [ ] Create Celery task for automated craft completion (timed)
 - [ ] Write tests for Crafts API
+- [ ] Schedule periodic item_history cleanup task (Celery periodic task, runs daily)
 
 ### Sub-phase 3.3: Crafts Management Frontend
 

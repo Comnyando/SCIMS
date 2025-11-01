@@ -31,6 +31,30 @@ from app.schemas.auth import (
     LoginResponse,
     RegisterResponse,
 )
+from app.schemas.item import (
+    ItemBase,
+    ItemCreate,
+    ItemUpdate,
+    ItemResponse,
+)
+from app.schemas.location import (
+    LocationBase,
+    LocationCreate,
+    LocationUpdate,
+    LocationResponse,
+)
+from app.schemas.ship import (
+    ShipBase,
+    ShipCreate,
+    ShipUpdate,
+    ShipResponse,
+)
+from app.schemas.canonical_location import (
+    CanonicalLocationBase,
+    CanonicalLocationCreate,
+    CanonicalLocationUpdate,
+    CanonicalLocationResponse,
+)
 
 __all__ = [
     # User schemas
@@ -56,4 +80,24 @@ __all__ = [
     "RefreshTokenRequest",
     "LoginResponse",
     "RegisterResponse",
+    # Item schemas
+    "ItemBase",
+    "ItemCreate",
+    "ItemUpdate",
+    "ItemResponse",
+    # Location schemas
+    "LocationBase",
+    "LocationCreate",
+    "LocationUpdate",
+    "LocationResponse",
+    # Ship schemas
+    "ShipBase",
+    "ShipCreate",
+    "ShipUpdate",
+    "ShipResponse",
+    # Canonical Location schemas
+    "CanonicalLocationBase",
+    "CanonicalLocationCreate",
+    "CanonicalLocationUpdate",
+    "CanonicalLocationResponse",
 ]
