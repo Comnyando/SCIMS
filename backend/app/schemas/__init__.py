@@ -62,6 +62,38 @@ from app.schemas.inventory import (
     InventoryHistory,
     StockReservation,
 )
+from app.schemas.blueprint import (
+    BlueprintIngredient,
+    BlueprintBase,
+    BlueprintCreate,
+    BlueprintUpdate,
+    BlueprintResponse,
+)
+from app.schemas.craft import (
+    CraftIngredientBase,
+    CraftBase,
+    CraftCreate,
+    CraftUpdate,
+    CraftIngredientResponse,
+    CraftResponse,
+    CraftProgressResponse,
+)
+from app.schemas.resource_source import (
+    ResourceSourceBase,
+    ResourceSourceCreate,
+    ResourceSourceUpdate,
+    ResourceSourceResponse,
+    SourceVerificationLogBase,
+    SourceVerificationLogCreate,
+    SourceVerificationLogResponse,
+)
+from app.schemas.optimization import (
+    FindSourcesRequest,
+    FindSourcesResponse,
+    SuggestCraftsRequest,
+    SuggestCraftsResponse,
+    ResourceGapResponse,
+)
 
 __all__ = [
     # User schemas
@@ -113,4 +145,32 @@ __all__ = [
     "InventoryTransfer",
     "InventoryHistory",
     "StockReservation",
+    # Blueprint schemas
+    "BlueprintIngredient",
+    "BlueprintBase",
+    "BlueprintCreate",
+    "BlueprintUpdate",
+    "BlueprintResponse",
+    # Craft schemas
+    "CraftIngredientBase",
+    "CraftBase",
+    "CraftCreate",
+    "CraftUpdate",
+    "CraftIngredientResponse",
+    "CraftResponse",
+    "CraftProgressResponse",
+    # Resource Source schemas
+    "ResourceSourceBase",
+    "ResourceSourceCreate",
+    "ResourceSourceUpdate",
+    "ResourceSourceResponse",
+    "SourceVerificationLogBase",
+    "SourceVerificationLogCreate",
+    "SourceVerificationLogResponse",
+    # Optimization schemas
+    "FindSourcesRequest",
+    "FindSourcesResponse",
+    "SuggestCraftsRequest",
+    "SuggestCraftsResponse",
+    "ResourceGapResponse",
 ]

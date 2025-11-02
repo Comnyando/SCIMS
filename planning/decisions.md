@@ -578,7 +578,7 @@ This document records significant architectural decisions, their context, and ra
 
 **Status:** Accepted  
 **Date:** 11/2025  
-**Context:** The project aims to host a public, community-usable catalog of items, recipes, locations, and related data while preventing abuse and ensuring data quality.
+**Context:** The project aims to host a public, community-usable catalog of items, blueprints, locations, and related data while preventing abuse and ensuring data quality.
 
 **Decision:** Implement a curated Public Commons with submissions, moderation, versioning, and public read endpoints. Introduce advanced roles (`curator`, `moderator`) to review and publish content. Maintain provenance, audit trails, and a takedown process.
 

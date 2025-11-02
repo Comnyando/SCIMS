@@ -4,7 +4,13 @@
 
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Navbar, NavbarGroup, NavbarHeading, Button, Alignment } from "@blueprintjs/core";
+import {
+  Navbar,
+  NavbarGroup,
+  NavbarHeading,
+  Button,
+  Alignment,
+} from "@blueprintjs/core";
 import { useAuth } from "../contexts/AuthContext";
 import { spacing, colors } from "../styles/theme";
 
@@ -27,10 +33,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { path: "/items", label: "Items", icon: "cube" as const },
     { path: "/locations", label: "Locations", icon: "map-marker" as const },
     { path: "/inventory", label: "Inventory", icon: "box" as const },
+    { path: "/blueprints", label: "Blueprints", icon: "build" as const },
   ];
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: colors.background.secondary }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: colors.background.secondary,
+      }}
+    >
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>SCIMS</NavbarHeading>
@@ -52,11 +64,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <span style={{ marginRight: spacing.md, color: colors.text.primary }}>
             {user?.username || user?.email}
           </span>
-          <Button icon="log-out" text="Logout" intent="danger" onClick={handleLogout} />
+          <Button
+            icon="log-out"
+            text="Logout"
+            intent="danger"
+            onClick={handleLogout}
+          />
         </NavbarGroup>
       </Navbar>
-      <main style={{ padding: spacing.xl, maxWidth: "1400px", margin: "0 auto" }}>{children}</main>
+      <main
+        style={{ padding: spacing.xl, maxWidth: "1400px", margin: "0 auto" }}
+      >
+        {children}
+      </main>
     </div>
   );
 }
-

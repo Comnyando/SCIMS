@@ -181,42 +181,42 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [x] Update root README.md with inventory management features
 - [x] Add API endpoint examples to backend/README.md
 - [x] Add initial user-facing guide sections for inventory UI
-- [x] Implement initial onboarding scaffold (tour placeholders)
+- [~] Onboarding/tour system deferred - will be implemented during UI redesign phase
 
 ---
 
 ## Phase 3: Planning & Crafting
 
-### Sub-phase 3.1: Recipes System
+### Sub-phase 3.1: Blueprints System
 
 **Tasks:**
-- [ ] Create database migration for recipes table
-- [ ] Create Recipe model and schemas
-- [ ] Implement Recipes API:
-  - GET /api/v1/recipes
-  - POST /api/v1/recipes
-  - GET /api/v1/recipes/{recipe_id}
-  - PATCH /api/v1/recipes/{recipe_id}
-  - DELETE /api/v1/recipes/{recipe_id}
-  - GET /api/v1/recipes/popular
-  - GET /api/v1/recipes/by-item/{item_id}
-- [ ] Implement recipe validation (check item IDs exist)
-- [ ] Implement recipe sharing (public/private)
-- [ ] Write tests for Recipes API
-- [ ] Create frontend Recipe browser page
-- [ ] Create Recipe detail/view page
-- [ ] Create Recipe creation/edit form
-- [ ] Update docs/user-guide/crafting.md with recipe and craft management
-- [ ] Update root README.md with crafting features
+- [x] Create database migration for blueprints table
+- [x] Create Blueprint model and schemas
+- [x] Implement Blueprints API:
+  - [x] GET /api/v1/blueprints
+  - [x] POST /api/v1/blueprints
+  - [x] GET /api/v1/blueprints/{blueprint_id}
+  - [x] PATCH /api/v1/blueprints/{blueprint_id}
+  - [x] DELETE /api/v1/blueprints/{blueprint_id}
+  - [x] GET /api/v1/blueprints/popular
+  - [x] GET /api/v1/blueprints/by-item/{item_id}
+- [x] Implement blueprint validation (check item IDs exist)
+- [x] Implement blueprint sharing (public/private)
+- [x] Write tests for Blueprints API
+- [x] Create frontend Blueprint browser page
+- [x] Create Blueprint detail/view page
+- [x] Create Blueprint creation/edit form
+- [x] Update docs/user-guide/crafting.md with blueprint and craft management
+- [x] Update root README.md with crafting features
 
 ### Sub-phase 3.2: Crafts Management Backend
 
 **Tasks:**
-- [ ] Create database migrations for:
+- [x] Create database migrations for:
   - crafts table
   - craft_ingredients table
-- [ ] Create models and schemas
-- [ ] Implement Crafts API:
+- [x] Create models and schemas
+- [x] Implement Crafts API:
   - GET /api/v1/crafts
   - POST /api/v1/crafts
   - GET /api/v1/crafts/{craft_id}
@@ -225,25 +225,25 @@ This document provides a detailed, phase-by-phase implementation plan with actio
   - POST /api/v1/crafts/{craft_id}/start
   - POST /api/v1/crafts/{craft_id}/complete
   - GET /api/v1/crafts/{craft_id}/progress
-- [ ] Implement ingredient reservation on craft creation
-- [ ] Implement stock deduction on craft completion
-- [ ] Create Celery task for automated craft completion (timed)
-- [ ] Write tests for Crafts API
-- [ ] Schedule periodic item_history cleanup task (Celery periodic task, runs daily)
+- [x] Implement ingredient reservation on craft creation
+- [x] Implement stock deduction on craft completion
+- [x] Create Celery task for automated craft completion (timed)
+- [x] Write tests for Crafts API
+- [x] Schedule periodic item_history cleanup task (Celery periodic task, runs daily)
 
 ### Sub-phase 3.3: Crafts Management Frontend
 
 **Tasks:**
-- [ ] Create Craft queue page
-- [ ] Create Craft creation wizard (select recipe, set location, etc.)
-- [ ] Create Craft detail page with progress tracking
-- [ ] Implement real-time updates (WebSocket or polling)
-- [ ] Create craft status indicators
-- [ ] Add filtering and sorting to craft list
-- [ ] Write frontend tests
-- [ ] Update docs/user-guide/crafting.md with craft tracking features
-- [ ] Add crafting examples to documentation
-- [ ] Add in-app guided tour steps for crafting flow
+- [x] Create Craft queue page
+- [x] Create Craft creation wizard (select recipe, set location, etc.)
+- [x] Create Craft detail page with progress tracking
+- [x] Implement real-time updates (WebSocket or polling) - Using polling via React Query
+- [x] Create craft status indicators
+- [x] Add filtering and sorting to craft list
+- [x] Update docs/user-guide/crafting.md with craft tracking features
+- [x] Add crafting examples to documentation (crafting-examples.md)
+
+**Note:** Frontend testing and guided tours deferred until UI redesign phase (after backend completion).
 
 ---
 
@@ -252,51 +252,51 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 4.1: Source Tracking System
 
 **Tasks:**
-- [ ] Create database migrations for:
+- [x] Create database migrations for:
   - resource_sources table
   - source_verification_log table
-- [ ] Create models and schemas
-- [ ] Implement Resource Sources API:
+- [x] Create models and schemas
+- [x] Implement Resource Sources API:
   - GET /api/v1/sources
   - POST /api/v1/sources
   - GET /api/v1/sources/{source_id}
   - PATCH /api/v1/sources/{source_id}
   - POST /api/v1/sources/{source_id}/verify
-- [ ] Implement reliability scoring algorithm
-- [ ] Create source verification workflow
-- [ ] Write tests
+- [x] Implement reliability scoring algorithm
+- [x] Create source verification workflow
+- [x] Write tests
 
 ### Sub-phase 4.2: Optimization Algorithms
 
 **Tasks:**
-- [ ] Design optimization algorithm:
+- [x] Design optimization algorithm:
   - Check current stocks first
   - Check other players' stocks (with permissions)
   - Check universe sources
   - Calculate costs/benefits
-- [ ] Implement POST /api/v1/optimization/find-sources endpoint
-- [ ] Implement POST /api/v1/optimization/suggest-crafts endpoint
-- [ ] Implement GET /api/v1/optimization/resource-gap/{craft_id}
-- [ ] Create optimization service class
-- [ ] Write comprehensive tests for algorithms
-- [ ] Performance test with large datasets
-- [ ] Update docs/user-guide/optimization.md with optimization features
-- [ ] Document optimization algorithms and source finding logic
-- [ ] Add examples of optimization usage
+- [x] Implement POST /api/v1/optimization/find-sources endpoint
+- [x] Implement POST /api/v1/optimization/suggest-crafts endpoint
+- [x] Implement GET /api/v1/optimization/resource-gap/{craft_id}
+- [x] Create optimization service class
+- [x] Write comprehensive tests for algorithms
+- [x] Performance test with large datasets
+- [x] Update docs/user-guide/optimization.md with optimization features
+- [x] Document optimization algorithms and source finding logic
+- [x] Add examples of optimization usage
 
 ### Sub-phase 4.3: Optimization Frontend
 
 **Tasks:**
-- [ ] Create optimization results display component
-- [ ] Create resource gap visualization
-- [ ] Create source recommendation cards
-- [ ] Integrate optimization into craft creation flow
-- [ ] Create optimization settings page
-- [ ] Add cost/benefit indicators
-- [ ] Write frontend tests
-- [ ] Update docs/user-guide/optimization.md with UI instructions
-- [ ] Add optimization workflow examples
-- [ ] Add in-app guided tour steps for optimization
+- [x] Create optimization results display component
+- [x] Create resource gap visualization
+- [x] Create source recommendation cards
+- [x] Integrate optimization into craft creation flow
+- [x] Create optimization settings page
+- [x] Add cost/benefit indicators
+- [x] Update docs/user-guide/optimization.md with UI instructions
+- [x] Add optimization workflow examples
+
+**Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
 ---
 
@@ -319,8 +319,9 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Create frontend Goals page
 - [ ] Create Goal creation/edit form
 - [ ] Create Goal progress visualization
-- [ ] Add in-app guided tour steps for goals
 - [ ] Update docs/user-guide/goals.md with usage
+
+**Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
 ### Sub-phase 5.2: Analytics Foundation
 
@@ -384,11 +385,12 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Create webhook configuration UI
 - [ ] Create import/export UI
 - [ ] Create integration testing interface
-- [ ] Write frontend tests
 - [ ] Update docs/user-guide/integrations.md with integration setup
 - [ ] Document import/export formats and procedures
+
 - [ ] Add integration examples and webhook configuration
-- [ ] Add in-app guide for integrations & import/export
+
+**Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
 ---
 
@@ -423,10 +425,10 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Build Public Entity Manager (list/search/tags/version)
 - [ ] Build Tag Manager (CRUD/merge)
 - [ ] Build Duplicate Finder UI (review/confirm merges)
-- [ ] Add in-app admin tour for moderation tools
 - [ ] Add user-facing submission UI with guidelines
 - [ ] Update docs/user-guide with submission guidelines & admin guide
-- [ ] Write frontend tests for moderation flows
+
+**Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
 ---
 
@@ -436,7 +438,6 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 
 **Tasks:**
 - [ ] Achieve >80% backend test coverage
-- [ ] Achieve >70% frontend test coverage
 - [ ] Write integration tests for critical flows:
   - User registration → org creation → inventory → craft
   - Recipe sharing → craft planning → execution
@@ -444,7 +445,8 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Setup E2E tests with Playwright/Cypress
 - [ ] Create test data fixtures
 - [ ] Document testing procedures
-- [ ] Test in-app onboarding/tutorial flows end-to-end
+
+**Note:** Frontend test coverage and onboarding/tutorial flows deferred until UI redesign phase.
 
 ### Sub-phase 7.2: Documentation
 

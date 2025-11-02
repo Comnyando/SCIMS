@@ -25,6 +25,11 @@ from app.models import (  # noqa: F401
     item_stock,
     item_history,
     ship,
+    blueprint,
+    craft,
+    craft_ingredient,
+    resource_source,
+    source_verification_log,
 )
 
 # Use an in-memory SQLite database for tests

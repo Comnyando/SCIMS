@@ -50,8 +50,11 @@ export const colors = {
   border: {
     light: "#E1E8ED",
     medium: "#CED9E0",
-    dark: "#A7B6C2",
+    dark: "#8A9BA8",
   },
+  success: "#0F9960",
+  warning: "#D9822B",
+  danger: "#DB3737",
 } as const;
 
 export const borderRadius = {
@@ -66,4 +69,3 @@ export const shadows = {
   md: "0 2px 4px rgba(0, 0, 0, 0.1)",
   lg: "0 4px 8px rgba(0, 0, 0, 0.15)",
 } as const;
-
