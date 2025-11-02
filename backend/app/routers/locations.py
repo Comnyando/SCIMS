@@ -83,7 +83,9 @@ async def list_locations(
     ),
     owner_id: Optional[str] = Query(None, description="Filter by owner ID"),
     type: Optional[str] = Query(None, alias="location_type", description="Filter by location type"),
-    location_type: Optional[str] = Query(None, description="Filter by location type (deprecated, use 'type')"),
+    location_type: Optional[str] = Query(
+        None, description="Filter by location type (deprecated, use 'type')"
+    ),
     parent_location_id: Optional[str] = Query(None, description="Filter by parent location ID"),
     search: Optional[str] = Query(None, description="Search term for location name"),
     db: Session = Depends(get_db),
