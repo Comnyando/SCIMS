@@ -304,114 +304,55 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 
 **Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
----
-
-## Future Enhancement Notes
-
-### Organization Roles & Permissions (Post-MVP)
-
-**Quartermaster Role:**
-- Create a "Quartermaster" role level for organizations (between regular member and admin)
-- Quartermasters should have permissions to:
-  - Allocate and modify organization stock/inventory
-  - Allocate resources to organization crafts and projects
-  - Approve/reject resource requisitions (see below)
-  - View organization resource reports
-  - Manage organization resource sources
-- Quartermasters should NOT have permissions to:
-  - Modify organization settings
-  - Add/remove members (unless also granted)
-  - Delete organization
-- Implementation considerations:
-  - Extend `OrganizationMember` model with `role` field (owner, admin, quartermaster, member, viewer)
-  - Update RBAC system to support role-based permissions
-  - Add role assignment/management endpoints
-  - Update access control checks throughout inventory, crafts, and optimization endpoints
-
-**Resource Requisition System:**
-- Create a requisition system for requesting resources from:
-  - Organization stock (when user is not a quartermaster/admin)
-  - Other players' shared resources
-  - Organization projects/crafts requiring additional resources
-- Requisition workflow:
-  - Users can create requisitions specifying:
-    - Requested items and quantities
-    - Source (org stock, player stock, project allocation)
-    - Purpose/justification
-    - Priority level
-  - Requisitions require approval by:
-    - Organization quartermaster(s)
-    - Organization admin(s)
-    - Project lead (for project-specific requisitions)
-  - Approval workflow:
-    - Requisitions can be approved, rejected, or modified
-    - Approvals can have comments/notes
-    - Multi-level approval possible (quartermaster → admin)
-    - Automatic fulfillment upon approval (if resources available)
-    - Notifications for requester and approvers
-- Implementation considerations:
-  - New `requisitions` table with fields:
-    - `id`, `requester_id`, `organization_id` (nullable), `project_id` (nullable)
-    - `status` (pending, approved, rejected, fulfilled, cancelled)
-    - `requested_items` (JSONB), `priority`, `purpose`
-    - `approved_by`, `approved_at`, `approval_notes`
-    - `fulfilled_at`, `created_at`, `updated_at`
-  - Requisition approval API endpoints
-  - Integration with inventory system for fulfillment
-  - Notification system for status changes
-  - Requisition history and audit trail
-
----
-
 ## Phase 5: Goals & Analytics
 
 ### Sub-phase 5.1: Goals System
 
 **Tasks:**
-- [ ] Create database migration for goals table
-- [ ] Create Goal model and schemas
-- [ ] Implement Goals API:
+- [x] Create database migration for goals table
+- [x] Create Goal model and schemas
+- [x] Implement Goals API:
   - GET /api/v1/goals
   - POST /api/v1/goals
   - GET /api/v1/goals/{goal_id}
   - PATCH /api/v1/goals/{goal_id}
   - DELETE /api/v1/goals/{goal_id}
-- [ ] Implement goal progress calculation
-- [ ] Implement goal completion detection
-- [ ] Write tests
-- [ ] Create frontend Goals page
-- [ ] Create Goal creation/edit form
-- [ ] Create Goal progress visualization
-- [ ] Update docs/user-guide/goals.md with usage
+- [x] Implement goal progress calculation
+- [x] Implement goal completion detection
+- [x] Write tests
+- [x] Create frontend Goals page
+- [x] Create Goal creation/edit form
+- [x] Create Goal progress visualization
+- [x] Update docs/user-guide/goals.md with usage
 
 **Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
 ### Sub-phase 5.2: Analytics Foundation
 
 **Tasks:**
-- [ ] Create database migrations for:
+- [x] Create database migrations for:
   - usage_events table
   - recipe_usage_stats table
-- [ ] Create models and schemas
-- [ ] Implement consent management:
+- [x] Create models and schemas
+- [x] Implement consent management:
   - User consent flag
   - Consent API endpoints
-- [ ] Create usage event logging middleware
-- [ ] Implement Analytics API:
+- [x] Create usage event logging middleware
+- [x] Implement Analytics API:
   - GET /api/v1/analytics/usage-stats (if consented)
   - GET /api/v1/analytics/recipe-stats/{recipe_id}
-- [ ] Create Celery task for stats aggregation
-- [ ] Implement privacy safeguards (anonymization)
-- [ ] Write tests
-- [ ] Create frontend consent management UI
-- [ ] Create basic analytics dashboard (if consented)
-- [ ] Update docs/user-guide/goals.md with goal management
-- [ ] Document analytics features and consent management
-- [ ] Update root README.md with goals and analytics features
+- [x] Create Celery task for stats aggregation
+- [x] Implement privacy safeguards (anonymization)
+- [x] Write tests
+- [x] Create frontend consent management UI
+- [x] Create basic analytics dashboard (if consented)
+- [x] Update docs/user-guide/goals.md with goal management
+- [x] Document analytics features and consent management
+- [x] Update root README.md with goals and analytics features
 
 ---
 
-## Phase 6: Integration고ramework
+## Phase 6: Integration Framework
 
 ### Sub-phase 6.1: Integration Service Backend
 
@@ -505,7 +446,6 @@ This document provides a detailed, phase-by-phase implementation plan with actio
   - User registration → org creation → inventory → craft
   - Recipe sharing → craft planning → execution
   - Integration setup → data import
-- [ ] Setup E2E tests with Playwright/Cypress
 - [ ] Create test data fixtures
 - [ ] Document testing procedures
 
@@ -665,4 +605,64 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ---
 
 **End of Implementation Roadmap**
+
+---
+
+## Future Enhancement Notes
+
+### Organization Roles & Permissions (Post-MVP)
+
+**Quartermaster Role:**
+- Create a "Quartermaster" role level for organizations (between regular member and admin)
+- Quartermasters should have permissions to:
+  - Allocate and modify organization stock/inventory
+  - Allocate resources to organization crafts and projects
+  - Approve/reject resource requisitions (see below)
+  - View organization resource reports
+  - Manage organization resource sources
+- Quartermasters should NOT have permissions to:
+  - Modify organization settings
+  - Add/remove members (unless also granted)
+  - Delete organization
+- Implementation considerations:
+  - Extend `OrganizationMember` model with `role` field (owner, admin, quartermaster, member, viewer)
+  - Update RBAC system to support role-based permissions
+  - Add role assignment/management endpoints
+  - Update access control checks throughout inventory, crafts, and optimization endpoints
+
+**Resource Requisition System:**
+- Create a requisition system for requesting resources from:
+  - Organization stock (when user is not a quartermaster/admin)
+  - Other players' shared resources
+  - Organization projects/crafts requiring additional resources
+- Requisition workflow:
+  - Users can create requisitions specifying:
+    - Requested items and quantities
+    - Source (org stock, player stock, project allocation)
+    - Purpose/justification
+    - Priority level
+  - Requisitions require approval by:
+    - Organization quartermaster(s)
+    - Organization admin(s)
+    - Project lead (for project-specific requisitions)
+  - Approval workflow:
+    - Requisitions can be approved, rejected, or modified
+    - Approvals can have comments/notes
+    - Multi-level approval possible (quartermaster → admin)
+    - Automatic fulfillment upon approval (if resources available)
+    - Notifications for requester and approvers
+- Implementation considerations:
+  - New `requisitions` table with fields:
+    - `id`, `requester_id`, `organization_id` (nullable), `project_id` (nullable)
+    - `status` (pending, approved, rejected, fulfilled, cancelled)
+    - `requested_items` (JSONB), `priority`, `purpose`
+    - `approved_by`, `approved_at`, `approval_notes`
+    - `fulfilled_at`, `created_at`, `updated_at`
+  - Requisition approval API endpoints
+  - Integration with inventory system for fulfillment
+  - Notification system for status changes
+  - Requisition history and audit trail
+
+---
+
 

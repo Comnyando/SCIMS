@@ -12,6 +12,8 @@ import { InventoryService } from "./inventory";
 import { BlueprintsService } from "./blueprints";
 import { CraftsService } from "./crafts";
 import { OptimizationService } from "./optimization";
+import { GoalsService } from "./goals";
+import { AnalyticsService } from "./analytics";
 
 // Create a single base client instance to share
 const baseClient = new ApiClient();
@@ -24,6 +26,8 @@ const inventoryService = new InventoryService();
 const blueprintsService = new BlueprintsService();
 const craftsService = new CraftsService();
 const optimizationService = new OptimizationService();
+const goalsService = new GoalsService();
+const analyticsService = new AnalyticsService();
 
 // Share the client instance across all services
 authService.client = baseClient.client;
@@ -33,6 +37,8 @@ inventoryService.client = baseClient.client;
 blueprintsService.client = baseClient.client;
 craftsService.client = baseClient.client;
 optimizationService.client = baseClient.client;
+goalsService.client = baseClient.client;
+analyticsService.client = baseClient.client;
 
 // Unified API client that combines all services
 class UnifiedApiClient extends AuthService {
@@ -51,6 +57,8 @@ class UnifiedApiClient extends AuthService {
   blueprints = blueprintsService;
   crafts = craftsService;
   optimization = optimizationService;
+  goals = goalsService;
+  analytics = analyticsService;
 }
 
 export const apiClient = new UnifiedApiClient();

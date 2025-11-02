@@ -38,4 +38,24 @@ celery_app.conf.beat_schedule = {
         "task": "app.tasks.maintenance.cleanup_old_item_history",
         "schedule": 86400.0,  # Run daily (24 hours in seconds)
     },
+    "aggregate-recipe-stats-daily": {
+        "task": "analytics.aggregate_recipe_stats",
+        "schedule": 86400.0,  # Run daily
+        "kwargs": {"period_type": "daily"},
+    },
+    "aggregate-recipe-stats-weekly": {
+        "task": "analytics.aggregate_recipe_stats",
+        "schedule": 604800.0,  # Run weekly (7 days in seconds)
+        "kwargs": {"period_type": "weekly"},
+    },
+    "aggregate-recipe-stats-monthly": {
+        "task": "analytics.aggregate_recipe_stats",
+        "schedule": 2592000.0,  # Run monthly (30 days in seconds)
+        "kwargs": {"period_type": "monthly"},
+    },
+    "cleanup-old-analytics-events": {
+        "task": "analytics.cleanup_old_events",
+        "schedule": 86400.0,  # Run daily
+        "kwargs": {"days_to_keep": 365},
+    },
 }

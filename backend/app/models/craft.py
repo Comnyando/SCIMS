@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-from app.models.base import Base, UUIDPrimaryKeyMixin
+from app.models.base import Base, UUIDPrimaryKeyMixin, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.blueprint import Blueprint
@@ -38,7 +38,7 @@ CRAFT_STATUSES = [
 ]
 
 
-class Craft(Base, UUIDPrimaryKeyMixin):
+class Craft(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """
     Craft model for tracking crafting operations.
 

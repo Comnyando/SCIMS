@@ -18,7 +18,12 @@ import BlueprintFormPage from "./pages/BlueprintFormPage";
 import CraftsPage from "./pages/CraftsPage";
 import CraftFormPage from "./pages/CraftFormPage";
 import CraftDetailPage from "./pages/CraftDetailPage";
+import GoalsPage from "./pages/GoalsPage";
+import GoalFormPage from "./pages/GoalFormPage";
+import GoalDetailPage from "./pages/GoalDetailPage";
 import OptimizationSettingsPage from "./pages/OptimizationSettingsPage";
+import AnalyticsConsentPage from "./pages/AnalyticsConsentPage";
+import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 
 function App() {
   return (
@@ -116,10 +121,58 @@ function App() {
             }
           />
           <Route
+            path="/goals"
+            element={
+              <ProtectedRoute>
+                <GoalsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/goals/new"
+            element={
+              <ProtectedRoute>
+                <GoalFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/goals/:id/edit"
+            element={
+              <ProtectedRoute>
+                <GoalFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/goals/:id"
+            element={
+              <ProtectedRoute>
+                <GoalDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/settings/optimization"
             element={
               <ProtectedRoute>
                 <OptimizationSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics/consent"
+            element={
+              <ProtectedRoute>
+                <AnalyticsConsentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboardPage />
               </ProtectedRoute>
             }
           />

@@ -8,7 +8,6 @@ export * from "./location";
 export * from "./inventory";
 export * from "./blueprint";
 export * from "./craft";
+export * from "./goal";
 export * from "./common";
 export * from "./optimization";
-export * from "./common";
-
