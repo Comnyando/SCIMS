@@ -1003,27 +1003,41 @@ Must include:
 
 ## Future Enhancements (Post-MVP)
 
-1. **Mobile Application**
+1. **Organization Roles & Permissions**
+   - **Quartermaster Role:**
+     - Intermediate role between member and admin
+     - Permissions to allocate/modify organization stock
+     - Can allocate resources to organization crafts and projects
+     - Can approve/reject resource requisitions
+     - Cannot modify org settings or membership
+   - **Resource Requisition System:**
+     - Users can request resources from org or other players
+     - Approval workflow with quartermasters/admins
+     - Multi-level approval support
+     - Automatic fulfillment upon approval
+     - Requisition history and audit trail
+
+2. **Mobile Application**
    - React Native app
    - Offline capability
    - Push notifications
 
-2. **Advanced Analytics**
+3. **Advanced Analytics**
    - Predictive crafting recommendations
    - Market trend analysis
    - Resource price tracking
 
-3. **Real-time Collaboration**
+4. **Real-time Collaboration**
    - Live inventory updates across users
    - Collaborative planning tools
    - Chat/communication features
 
-4. **Marketplace Integration**
+5. **Marketplace Integration**
    - Direct integration with Star Citizen market APIs (when available)
    - Price comparison across sources
    - Automated trading suggestions
 
-5. **AI/ML Features**
+6. **AI/ML Features**
    - Blueprint optimization suggestions
    - Demand forecasting
    - Anomaly detection in inventory

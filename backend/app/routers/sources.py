@@ -232,7 +232,7 @@ async def list_sources(
                 else None
             ),
         }
-        source_responses.append(ResourceSourceResponse(**source_dict))
+        source_responses.append(ResourceSourceResponse.model_validate(source_dict))
 
     return {
         "items": source_responses,
@@ -326,7 +326,7 @@ async def create_source(
         ),
     }
 
-    return ResourceSourceResponse(**source_dict)
+    return ResourceSourceResponse.model_validate(source_dict)
 
 
 @router.get("/{source_id}", response_model=ResourceSourceResponse)
@@ -374,7 +374,7 @@ async def get_source(
         ),
     }
 
-    return ResourceSourceResponse(**source_dict)
+    return ResourceSourceResponse.model_validate(source_dict)
 
 
 @router.patch("/{source_id}", response_model=ResourceSourceResponse)
@@ -459,7 +459,7 @@ async def update_source(
         ),
     }
 
-    return ResourceSourceResponse(**source_dict)
+    return ResourceSourceResponse.model_validate(source_dict)
 
 
 @router.post(
@@ -527,4 +527,4 @@ async def verify_source(
         "source": None,  # Could include source details if needed
     }
 
-    return SourceVerificationLogResponse(**verification_dict)
+    return SourceVerificationLogResponse.model_validate(verification_dict)

@@ -54,7 +54,3 @@ class UnifiedApiClient extends AuthService {
 }
 
 export const apiClient = new UnifiedApiClient();
-}
-
-export const apiClient = new UnifiedApiClient();
-

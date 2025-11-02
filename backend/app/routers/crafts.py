@@ -224,12 +224,16 @@ async def list_crafts(
         .all()
     ]
 
-    query = query.filter(
-        or_(
-            Craft.requested_by == current_user.id,
-            Craft.organization_id.in_(user_org_ids) if user_org_ids else False,
+    # Build access control filter
+    if user_org_ids:
+        query = query.filter(
+            or_(
+                Craft.requested_by == current_user.id,
+                Craft.organization_id.in_(user_org_ids),
+            )
         )
-    )
+    else:
+        query = query.filter(Craft.requested_by == current_user.id)
 
     # Apply filters
     if status_filter:
@@ -240,8 +244,11 @@ async def list_crafts(
         query = query.filter(Craft.blueprint_id == blueprint_id)
 
     # Apply sorting
-    sort_column = getattr(Craft, sort_by, None)
-    if sort_column is None:
+    if sort_by:
+        sort_column = getattr(Craft, sort_by, None)
+        if sort_column is None:
+            sort_column = Craft.priority
+    else:
         sort_column = Craft.priority
 
     if sort_order == "desc":
@@ -414,7 +421,7 @@ async def create_craft(
         "output_location": None,
         "ingredients": None,
     }
-    return CraftResponse(**response_dict)
+    return CraftResponse.model_validate(response_dict)
 
 
 @router.get("/{craft_id}", response_model=CraftResponse)
@@ -454,7 +461,7 @@ async def get_craft(
                 "item": None,
                 "source_location": None,
             }
-            ingredients.append(CraftIngredientResponse(**ing_dict))
+            ingredients.append(CraftIngredientResponse.model_validate(ing_dict))
 
     # Build response
     response_dict = {
@@ -475,7 +482,7 @@ async def get_craft(
         "output_location": None,
         "ingredients": ingredients,
     }
-    return CraftResponse(**response_dict)
+    return CraftResponse.model_validate(response_dict)
 
 
 @router.patch("/{craft_id}", response_model=CraftResponse)
@@ -544,7 +551,7 @@ async def update_craft(
         "output_location": None,
         "ingredients": None,
     }
-    return CraftResponse(**response_dict)
+    return CraftResponse.model_validate(response_dict)
 
 
 @router.delete("/{craft_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -677,7 +684,7 @@ async def start_craft(
         "output_location": None,
         "ingredients": None,
     }
-    return CraftResponse(**response_dict)
+    return CraftResponse.model_validate(response_dict)
 
 
 @router.post("/{craft_id}/complete", response_model=CraftResponse)
@@ -756,17 +763,18 @@ async def complete_craft(
                 stock.reserved_quantity -= ingredient.required_quantity
                 stock.updated_by = current_user.id
 
-                # Log history
-                log_item_history(
-                    db=db,
-                    item_id=ingredient.item_id,
-                    location_id=ingredient.source_location_id,
-                    quantity_change=-ingredient.required_quantity,
-                    transaction_type="consume",
-                    performed_by=current_user.id,
-                    notes=f"Consumed for craft {craft.id}",
-                    related_craft_id=craft.id,
-                )
+                # Log history (source_location_id should always be set for stock ingredients)
+                if ingredient.source_location_id:
+                    log_item_history(
+                        db=db,
+                        item_id=ingredient.item_id,
+                        location_id=ingredient.source_location_id,
+                        quantity_change=-ingredient.required_quantity,
+                        transaction_type="consume",
+                        performed_by=current_user.id,
+                        notes=f"Consumed for craft {craft.id}",
+                        related_craft_id=craft.id,
+                    )
 
             # Mark ingredient as fulfilled
             ingredient.status = INGREDIENT_STATUS_FULFILLED
@@ -816,7 +824,7 @@ async def complete_craft(
         "output_location": None,
         "ingredients": None,
     }
-    return CraftResponse(**response_dict)
+    return CraftResponse.model_validate(response_dict)
 
 
 @router.get("/{craft_id}/progress", response_model=CraftProgressResponse)

@@ -68,6 +68,6 @@ class DevEmailStr(str):
         # For all other cases, use standard email validation
         try:
             validated = validate_email(value, check_deliverability=False)
-            return validated.email
+            return str(validated.email)
         except EmailNotValidError as e:
             raise ValueError(f"Invalid email address: {str(e)}")

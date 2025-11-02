@@ -11,7 +11,7 @@ This router provides endpoints for managing crafting blueprints:
 - Get blueprints by output item
 """
 
-from typing import Optional
+from typing import Optional, Any
 from math import ceil
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -156,6 +156,7 @@ async def list_blueprints(
         query = query.filter(Blueprint.created_by == created_by)
 
     # Apply sorting
+    sort_column: Any
     if sort_by == "name":
         sort_column = Blueprint.name
     elif sort_by == "usage_count":
@@ -258,7 +259,7 @@ async def create_blueprint(
         "output_item": None,
         "creator": None,
     }
-    return BlueprintResponse(**response_dict)
+    return BlueprintResponse.model_validate(response_dict)
 
 
 @router.get("/popular", response_model=dict)
@@ -432,7 +433,7 @@ async def get_blueprint(
         "output_item": None,
         "creator": None,
     }
-    return BlueprintResponse(**response_dict)
+    return BlueprintResponse.model_validate(response_dict)
 
 
 @router.patch("/{blueprint_id}", response_model=BlueprintResponse)
@@ -492,7 +493,7 @@ async def update_blueprint(
         "output_item": None,
         "creator": None,
     }
-    return BlueprintResponse(**response_dict)
+    return BlueprintResponse.model_validate(response_dict)
 
 
 @router.delete("/{blueprint_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -524,133 +525,3 @@ async def delete_blueprint(
     db.commit()
 
     return None
-
-
-@router.get("/popular", response_model=dict)
-async def get_popular_blueprints(
-    limit: int = Query(10, ge=1, le=50, description="Number of blueprints to return"),
-    category: Optional[str] = Query(None, description="Filter by category"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
-):
-    """
-    Get most popular blueprints (by usage_count).
-
-    Returns public blueprints or user's own blueprints, sorted by usage_count descending.
-    """
-    query = db.query(Blueprint)
-
-    # Apply access control: only public blueprints or user's own blueprints
-    query = query.filter(
-        or_(
-            Blueprint.is_public == True,
-            Blueprint.created_by == current_user.id,
-        )
-    )
-
-    # Filter by category if provided
-    if category:
-        query = query.filter(Blueprint.category == category)
-
-    # Sort by usage_count descending
-    query = query.order_by(desc(Blueprint.usage_count))
-
-    # Get top blueprints
-    blueprints = query.limit(limit).all()
-
-    # Build response - manually construct dicts to avoid relationship validation issues
-    blueprint_responses = []
-    for blueprint in blueprints:
-        bp_dict = {
-            "id": str(blueprint.id),
-            "name": blueprint.name,
-            "description": blueprint.description,
-            "category": blueprint.category,
-            "crafting_time_minutes": blueprint.crafting_time_minutes,
-            "output_item_id": blueprint.output_item_id,
-            "output_quantity": float(blueprint.output_quantity),
-            "blueprint_data": blueprint.blueprint_data,
-            "created_by": blueprint.created_by,
-            "is_public": blueprint.is_public,
-            "usage_count": blueprint.usage_count,
-            "created_at": blueprint.created_at,
-            "output_item": None,
-            "creator": None,
-        }
-        blueprint_responses.append(bp_dict)
-
-    return {
-        "blueprints": blueprint_responses,
-        "total": len(blueprint_responses),
-    }
-
-
-@router.get("/by-item/{item_id}", response_model=dict)
-async def get_blueprints_by_item(
-    item_id: str,
-    skip: int = Query(0, ge=0, description="Number of records to skip"),
-    limit: int = Query(50, ge=1, le=100, description="Maximum number of records to return"),
-    is_public: Optional[bool] = Query(None, description="Filter by public/private"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
-):
-    """
-    Get all blueprints that produce a specific item.
-
-    Access Control:
-    - Returns public blueprints + user's own blueprints
-    """
-    # Validate item exists
-    validate_item_exists(db, item_id, "item")
-
-    query = db.query(Blueprint).filter(Blueprint.output_item_id == item_id)
-
-    # Apply access control
-    query = query.filter(
-        or_(
-            Blueprint.is_public == True,
-            Blueprint.created_by == current_user.id,
-        )
-    )
-
-    # Filter by public/private if specified
-    if is_public is not None:
-        query = query.filter(Blueprint.is_public == is_public)
-
-    # Sort by usage_count descending (most popular first)
-    query = query.order_by(desc(Blueprint.usage_count))
-
-    # Get total count
-    total = query.count()
-
-    # Apply pagination
-    blueprints = query.offset(skip).limit(limit).all()
-
-    # Build response - manually construct dicts to avoid relationship validation issues
-    blueprint_responses = []
-    for blueprint in blueprints:
-        bp_dict = {
-            "id": str(blueprint.id),
-            "name": blueprint.name,
-            "description": blueprint.description,
-            "category": blueprint.category,
-            "crafting_time_minutes": blueprint.crafting_time_minutes,
-            "output_item_id": blueprint.output_item_id,
-            "output_quantity": float(blueprint.output_quantity),
-            "blueprint_data": blueprint.blueprint_data,
-            "created_by": blueprint.created_by,
-            "is_public": blueprint.is_public,
-            "usage_count": blueprint.usage_count,
-            "created_at": blueprint.created_at,
-            "output_item": None,
-            "creator": None,
-        }
-        blueprint_responses.append(bp_dict)
-
-    return {
-        "blueprints": blueprint_responses,
-        "total": total,
-        "skip": skip,
-        "limit": limit,
-        "pages": ceil(total / limit) if limit > 0 else 0,
-    }

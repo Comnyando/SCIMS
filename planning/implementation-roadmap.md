@@ -306,6 +306,63 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 
 ---
 
+## Future Enhancement Notes
+
+### Organization Roles & Permissions (Post-MVP)
+
+**Quartermaster Role:**
+- Create a "Quartermaster" role level for organizations (between regular member and admin)
+- Quartermasters should have permissions to:
+  - Allocate and modify organization stock/inventory
+  - Allocate resources to organization crafts and projects
+  - Approve/reject resource requisitions (see below)
+  - View organization resource reports
+  - Manage organization resource sources
+- Quartermasters should NOT have permissions to:
+  - Modify organization settings
+  - Add/remove members (unless also granted)
+  - Delete organization
+- Implementation considerations:
+  - Extend `OrganizationMember` model with `role` field (owner, admin, quartermaster, member, viewer)
+  - Update RBAC system to support role-based permissions
+  - Add role assignment/management endpoints
+  - Update access control checks throughout inventory, crafts, and optimization endpoints
+
+**Resource Requisition System:**
+- Create a requisition system for requesting resources from:
+  - Organization stock (when user is not a quartermaster/admin)
+  - Other players' shared resources
+  - Organization projects/crafts requiring additional resources
+- Requisition workflow:
+  - Users can create requisitions specifying:
+    - Requested items and quantities
+    - Source (org stock, player stock, project allocation)
+    - Purpose/justification
+    - Priority level
+  - Requisitions require approval by:
+    - Organization quartermaster(s)
+    - Organization admin(s)
+    - Project lead (for project-specific requisitions)
+  - Approval workflow:
+    - Requisitions can be approved, rejected, or modified
+    - Approvals can have comments/notes
+    - Multi-level approval possible (quartermaster → admin)
+    - Automatic fulfillment upon approval (if resources available)
+    - Notifications for requester and approvers
+- Implementation considerations:
+  - New `requisitions` table with fields:
+    - `id`, `requester_id`, `organization_id` (nullable), `project_id` (nullable)
+    - `status` (pending, approved, rejected, fulfilled, cancelled)
+    - `requested_items` (JSONB), `priority`, `purpose`
+    - `approved_by`, `approved_at`, `approval_notes`
+    - `fulfilled_at`, `created_at`, `updated_at`
+  - Requisition approval API endpoints
+  - Integration with inventory system for fulfillment
+  - Notification system for status changes
+  - Requisition history and audit trail
+
+---
+
 ## Phase 5: Goals & Analytics
 
 ### Sub-phase 5.1: Goals System
