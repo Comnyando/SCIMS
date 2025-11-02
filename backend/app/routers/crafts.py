@@ -402,6 +402,23 @@ async def create_craft(
     db.commit()
     db.refresh(new_craft)
 
+    # Log blueprint usage event (if user has consented)
+    from app.utils.analytics import log_event
+
+    # Note: IP and user agent are logged by middleware; this provides blueprint_id context
+    try:
+        log_event(
+            db=db,
+            user_id=current_user.id,
+            event_type="blueprint_used",
+            entity_type="blueprint",
+            entity_id=blueprint.id,
+            event_data={"craft_id": new_craft.id},
+        )
+        db.commit()  # Commit the event
+    except Exception:
+        pass  # Don't fail craft creation if logging fails
+
     # Build response
     response_dict = {
         "id": str(new_craft.id),

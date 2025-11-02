@@ -34,6 +34,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { path: "/locations", label: "Locations", icon: "map-marker" as const },
     { path: "/inventory", label: "Inventory", icon: "box" as const },
     { path: "/blueprints", label: "Blueprints", icon: "build" as const },
+    { path: "/crafts", label: "Crafts", icon: "projects" as const },
+    { path: "/goals", label: "Goals", icon: "target" as const },
+    {
+      path: "/analytics",
+      label: "Analytics",
+      icon: "timeline-bar-chart" as const,
+    },
   ];
 
   return (

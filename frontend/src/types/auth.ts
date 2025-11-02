@@ -8,6 +8,7 @@ export interface User {
   username: string | null;
   is_active: boolean;
   is_verified: boolean;
+  analytics_consent: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -36,4 +37,3 @@ export interface LoginResponse extends Token {
 export interface RegisterResponse extends Token {
   user: User;
 }
-

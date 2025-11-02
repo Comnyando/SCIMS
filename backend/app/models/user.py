@@ -78,6 +78,13 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         comment="Whether the user email has been verified",
     )
 
+    analytics_consent: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="Whether user has consented to analytics data collection",
+    )
+
     # Relationships
     organizations: Mapped[list["OrganizationMember"]] = relationship(
         "OrganizationMember",

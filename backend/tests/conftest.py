@@ -30,6 +30,10 @@ from app.models import (  # noqa: F401
     craft_ingredient,
     resource_source,
     source_verification_log,
+    goal,
+    goal_item,
+    usage_event,
+    recipe_usage_stats,
 )
 
 # Use an in-memory SQLite database for tests

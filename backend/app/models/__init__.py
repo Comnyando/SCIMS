@@ -20,6 +20,10 @@ from app.models.craft import Craft
 from app.models.craft_ingredient import CraftIngredient
 from app.models.resource_source import ResourceSource
 from app.models.source_verification_log import SourceVerificationLog
+from app.models.goal import Goal
+from app.models.goal_item import GoalItem
+from app.models.usage_event import UsageEvent
+from app.models.recipe_usage_stats import RecipeUsageStats
 
 __all__ = [
     "Base",
@@ -36,4 +40,8 @@ __all__ = [
     "CraftIngredient",
     "ResourceSource",
     "SourceVerificationLog",
+    "Goal",
+    "GoalItem",
+    "UsageEvent",
+    "RecipeUsageStats",
 ]

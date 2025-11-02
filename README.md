@@ -14,8 +14,8 @@ A comprehensive web-based inventory management system for Star Citizen organizat
 2. **Planning & Goal Management**
    - Plan crafting operations from recipes
    - Track in-progress crafts with real-time status
-   - Set and monitor organizational goals
-   - Track completion outcomes
+   - Set and monitor organizational goals with multi-item tracking
+   - Track completion outcomes and progress automatically
 
 3. **Resource Optimization Engine**
    - Automatic source determination for materials
@@ -29,10 +29,11 @@ A comprehensive web-based inventory management system for Star Citizen organizat
    - External tool integration support
 
 5. **Analytics & Improvement**
-   - User consent-based data collection
-   - Recipe/item/usage logging
-   - Community-shared knowledge base
-   - Usage analytics for continuous improvement
+   - User consent-based analytics with privacy safeguards
+   - Usage event tracking (blueprint usage, goal creation, inventory updates)
+   - Recipe statistics and popularity tracking
+   - Analytics dashboard with insights
+   - Privacy-first: IP anonymization, consent management, transparent data collection
 
 ## Technology Stack
 
@@ -197,6 +198,14 @@ dc down
 - [Architecture Documentation](planning/architecture.md) - System architecture
 - [Implementation Roadmap](planning/implementation-roadmap.md) - Development timeline
 
+### User Guides
+
+- [Inventory Management Guide](docs/user-guide/inventory.md) - Managing items and locations
+- [Crafting Guide](docs/user-guide/crafting.md) - Creating and using blueprints
+- [Goals Guide](docs/user-guide/goals.md) - Setting and tracking goals
+- [Analytics & Privacy Guide](docs/user-guide/analytics.md) - Analytics features and consent management
+- [Optimization Guide](docs/user-guide/optimization.md) - Resource optimization features
+
 ## API Documentation
 
 When the backend is running, interactive API documentation is available at:
@@ -235,9 +244,12 @@ The inventory management system is now fully operational:
 - **Transaction History**: Complete audit trail of all inventory changes
 - **Filtering & Search**: Find items by name, location, or ID
 
-**Next Steps:**
-- Resource Optimization Engine (Phase 4)
-- Analytics & Integration (Phase 5)
+**Phase 5: Goals & Analytics** ✅
+- ✅ Multi-item goal tracking system
+- ✅ Automatic progress calculation and completion detection
+- ✅ Analytics foundation with consent management
+- ✅ Usage statistics and recipe analytics
+- ✅ Privacy safeguards and data anonymization
 
 ### Crafting & Blueprints Features
 
@@ -258,10 +270,31 @@ All blueprints support:
 - Usage tracking for popularity metrics
 - Full CRUD operations (Create, Read, Update, Delete)
 
-*Note: Crafts management (actually executing blueprints to produce items) will be available in Phase 3.2*
-- Planning & Crafting features (Phase 3)
-- Resource Optimization Engine (Phase 4)
-- Analytics & Integration (Phase 5)
+### Goals & Tracking Features
+
+The Goals System enables:
+
+- **Multi-Item Goals**: Track multiple items simultaneously in a single goal
+- **Automatic Progress Calculation**: Real-time progress tracking across all accessible inventory locations
+- **Progress Visualization**: Individual item progress bars and overall goal completion
+- **Automatic Completion**: Goals marked complete when all items reach their targets
+- **Personal & Organization Goals**: Create goals for yourself or your organization
+- **Target Dates**: Set optional deadlines with countdown tracking
+- **Goal Status Tracking**: Active, Completed, and Cancelled states
+
+### Analytics & Privacy Features
+
+The Analytics System provides:
+
+- **Consent-Based Tracking**: Optional analytics that requires explicit user consent
+- **Usage Statistics**: View aggregated usage data (events, top blueprints, goal creation patterns)
+- **Recipe Analytics**: Detailed statistics for blueprint usage and completion rates
+- **Privacy Safeguards**: IP anonymization, user agent truncation, no personal data collection
+- **Transparent Control**: Easy consent management with clear explanations of data collection
+- **Analytics Dashboard**: Visualize usage patterns and trends
+
+**Next Steps:**
+- Integration Framework (Phase 6)
 
 See [Implementation Roadmap](planning/implementation-roadmap.md) for the complete development plan.
 
