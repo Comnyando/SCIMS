@@ -7,13 +7,15 @@ They provide type safety and automatic validation for FastAPI endpoints.
 
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
+
+from app.core.validators import DevEmailStr
 
 
 class UserBase(BaseModel):
     """Base user schema with common fields."""
 
-    email: EmailStr = Field(..., description="User email address")
+    email: DevEmailStr = Field(..., description="User email address")
     username: Optional[str] = Field(None, max_length=100, description="Optional username")
 
 
@@ -36,7 +38,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     """Schema for updating user information."""
 
-    email: Optional[EmailStr] = Field(None, description="User email address")
+    email: Optional[DevEmailStr] = Field(None, description="User email address")
     username: Optional[str] = Field(None, max_length=100, description="Optional username")
     password: Optional[str] = Field(None, min_length=8, description="New password (if updating)")
     is_active: Optional[bool] = Field(None, description="Whether the user account is active")

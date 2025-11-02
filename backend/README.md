@@ -61,6 +61,9 @@ The backend will be available at `http://localhost:8000` and auto-reloads on cod
    
    # (Optional) Seed the database with test data
    python scripts/seed_data.py
+   
+   # (Optional) Create developer user with admin permissions (LOCAL ONLY)
+   python scripts/create_dev_user.py
    ```
 
 6. **Start the development server:**
@@ -176,6 +179,27 @@ The project uses Alembic for database migrations. All migration files are stored
    ```bash
    docker compose exec backend python scripts/seed_data.py
    ```
+
+4. **(Optional) Create developer user (LOCAL DEVELOPMENT ONLY):**
+   ```bash
+   # Using PowerShell (Windows)
+   .\backend\scripts\create_dev_user.ps1
+   
+   # Using bash (Linux/Mac)
+   ./backend/scripts/create_dev_user.sh
+   
+   # Or directly
+   docker compose exec backend python -m scripts.create_dev_user
+   ```
+   
+   This creates a developer account:
+   - **Email:** `dev@scims.local`
+   - **Username:** `dev`
+   - **Password:** `dev123`
+   - **Status:** Active & Verified
+   - **Permissions:** Owner of all organizations
+   
+   **⚠️ WARNING:** This script only works in development environment and should NEVER be run in production!
 
 **Option 2: Local Development**
 
@@ -337,6 +361,40 @@ python scripts/seed_data.py
 
 **Note:** The seed script is idempotent - it will skip existing records, so it's safe to run multiple times.
 
+### Creating a Developer User
+
+For local development, you can create a dedicated developer user with full admin permissions:
+
+```bash
+# From project root using helper script (PowerShell)
+.\backend\scripts\create_dev_user.ps1
+
+# From project root using helper script (bash)
+./backend/scripts/create_dev_user.sh
+
+# Or directly in Docker container
+docker compose exec backend python -m scripts.create_dev_user
+
+# Or locally (if running without Docker)
+python backend/scripts/create_dev_user.py
+```
+
+**Developer Account Credentials:**
+- **Email:** `dev@scims.local`
+- **Username:** `dev`
+- **Password:** `dev123`
+
+**Permissions:**
+- Active and verified account
+- Owner role in all existing organizations
+- Owner role in automatically created "Developer Organization"
+
+**⚠️ IMPORTANT NOTES:**
+- This script **ONLY runs in development environment** - it will refuse to run in production
+- The script is idempotent - safe to run multiple times (will update existing user if needed)
+- The developer user will be added as owner to all existing and future organizations
+- This user is intended for local development only and should never exist in production databases
+
 ## Testing
 
 ```bash
@@ -384,6 +442,221 @@ async def create_item(item: ItemCreate):
 1. Add variable to `app/config.py` Settings class
 2. Update `.env.example` with the new variable
 3. Document in this README if needed
+
+## API Endpoint Examples
+
+### Inventory API
+
+The inventory API provides endpoints for managing stock levels, transfers, and reservations.
+
+#### List Inventory
+
+Get inventory stock levels with optional filters:
+
+```bash
+# List all inventory (with pagination)
+GET /api/v1/inventory?skip=0&limit=50
+
+# Filter by item ID
+GET /api/v1/inventory?item_id=550e8400-e29b-41d4-a716-446655440000
+
+# Filter by location ID
+GET /api/v1/inventory?location_id=550e8400-e29b-41d4-a716-446655440000
+
+# Search by item name
+GET /api/v1/inventory?search=quantum
+
+# Combined filters
+GET /api/v1/inventory?item_id=550e8400-e29b-41d4-a716-446655440000&location_id=550e8400-e29b-41d4-a716-446655440000&skip=0&limit=50
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "item_id": "550e8400-e29b-41d4-a716-446655440000",
+      "location_id": "660e8400-e29b-41d4-a716-446655440000",
+      "quantity": 100,
+      "reserved_quantity": 25,
+      "available_quantity": 75,
+      "item_name": "Quantum Fuel",
+      "item_category": "Consumables",
+      "location_name": "New Babbage Landing Zone",
+      "location_type": "station",
+      "last_updated": "2024-01-01T12:00:00Z",
+      "updated_by_username": "admin"
+    }
+  ],
+  "total": 1,
+  "skip": 0,
+  "limit": 50,
+  "pages": 1
+}
+```
+
+#### Adjust Inventory
+
+Add or remove items from inventory:
+
+```bash
+POST /api/v1/inventory/adjust
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "item_id": "550e8400-e29b-41d4-a716-446655440000",
+  "location_id": "660e8400-e29b-41d4-a716-446655440000",
+  "quantity_change": 10,
+  "notes": "Restocked from trading post"
+}
+```
+
+**Positive `quantity_change`** adds items, **negative** removes items.
+
+**Response:**
+```json
+{
+  "item_id": "550e8400-e29b-41d4-a716-446655440000",
+  "location_id": "660e8400-e29b-41d4-a716-446655440000",
+  "quantity": 110,
+  "reserved_quantity": 25,
+  "available_quantity": 85,
+  "item_name": "Quantum Fuel",
+  "item_category": "Consumables",
+  "location_name": "New Babbage Landing Zone",
+  "location_type": "station",
+  "last_updated": "2024-01-01T12:05:00Z",
+  "updated_by_username": "admin"
+}
+```
+
+#### Transfer Items
+
+Move items between locations:
+
+```bash
+POST /api/v1/inventory/transfer
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "item_id": "550e8400-e29b-41d4-a716-446655440000",
+  "from_location_id": "660e8400-e29b-41d4-a716-446655440000",
+  "to_location_id": "770e8400-e29b-41d4-a716-446655440000",
+  "quantity": 50,
+  "notes": "Moving to ship cargo"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Successfully transferred 50 items",
+  "from_location": {
+    "id": "660e8400-e29b-41d4-a716-446655440000",
+    "name": "New Babbage Landing Zone",
+    "quantity": 60,
+    "available_quantity": 35
+  },
+  "to_location": {
+    "id": "770e8400-e29b-41d4-a716-446655440000",
+    "name": "Ship Cargo Bay",
+    "quantity": 50,
+    "available_quantity": 50
+  }
+}
+```
+
+#### Reserve Stock
+
+Reserve items for planned operations (e.g., crafting):
+
+```bash
+POST /api/v1/inventory/reserve
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "item_id": "550e8400-e29b-41d4-a716-446655440000",
+  "location_id": "660e8400-e29b-41d4-a716-446655440000",
+  "quantity": 30
+}
+```
+
+**Response:** Updated inventory stock with increased `reserved_quantity`.
+
+#### Unreserve Stock
+
+Release previously reserved items:
+
+```bash
+POST /api/v1/inventory/unreserve
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "item_id": "550e8400-e29b-41d4-a716-446655440000",
+  "location_id": "660e8400-e29b-41d4-a716-446655440000",
+  "quantity": 30
+}
+```
+
+#### Get Inventory History
+
+View transaction history:
+
+```bash
+# Get all history
+GET /api/v1/inventory/history?skip=0&limit=50
+
+# Filter by item
+GET /api/v1/inventory/history?item_id=550e8400-e29b-41d4-a716-446655440000
+
+# Filter by location
+GET /api/v1/inventory/history?location_id=660e8400-e29b-41d4-a716-446655440000
+
+# Filter by transaction type
+GET /api/v1/inventory/history?transaction_type=transfer
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": "880e8400-e29b-41d4-a716-446655440000",
+      "item_id": "550e8400-e29b-41d4-a716-446655440000",
+      "location_id": "660e8400-e29b-41d4-a716-446655440000",
+      "quantity_change": 10,
+      "transaction_type": "adjust",
+      "performed_by": "admin",
+      "notes": "Restocked from trading post",
+      "timestamp": "2024-01-01T12:05:00Z"
+    }
+  ],
+  "total": 1,
+  "skip": 0,
+  "limit": 50,
+  "pages": 1
+}
+```
+
+### Items API
+
+#### List Items
+
+```bash
+GET /api/v1/items?skip=0&limit=50&search=quantum&category=Consumables
+```
+
+### Locations API
+
+#### List Locations
+
+```bash
+GET /api/v1/locations?skip=0&limit=50&type=station&search=babbage
+```
 
 ## Troubleshooting
 

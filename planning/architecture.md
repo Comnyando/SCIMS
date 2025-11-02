@@ -259,11 +259,23 @@ locations
 ├── id (UUID, PK)
 ├── name (VARCHAR)
 ├── type (VARCHAR) -- station, ship, player_inventory, warehouse
-├── owner_type (VARCHAR) -- user, organization
+├── owner_type (VARCHAR) -- user, organization, ship
 ├── owner_id (UUID)
 ├── parent_location_id (UUID, FK -> locations.id, NULLABLE)
 ├── metadata (JSONB) -- flexible location-specific data
 └── created_at (TIMESTAMP)
+
+ships
+├── id (UUID, PK)
+├── name (VARCHAR)
+├── ship_type (VARCHAR) -- Constellation, Freelancer, etc.
+├── owner_type (VARCHAR) -- user, organization
+├── owner_id (UUID)
+├── current_location_id (UUID, FK -> locations.id, NULLABLE) -- where ship is parked
+├── cargo_location_id (UUID, FK -> locations.id, UNIQUE) -- ship's cargo grid location
+├── metadata (JSONB) -- cargo capacity, modules, etc.
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
 
 items
 ├── id (UUID, PK)

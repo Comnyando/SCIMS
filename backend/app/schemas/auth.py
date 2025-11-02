@@ -3,8 +3,9 @@ Pydantic schemas for authentication requests and responses.
 """
 
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 
+from app.core.validators import DevEmailStr
 from app.schemas.user import UserResponse
 
 
@@ -36,7 +37,7 @@ class TokenData(BaseModel):
 class RegisterRequest(BaseModel):
     """Schema for user registration request."""
 
-    email: EmailStr = Field(..., description="User email address")
+    email: DevEmailStr = Field(..., description="User email address")
     username: Optional[str] = Field(None, max_length=100, description="Optional username")
     password: str = Field(..., min_length=8, description="Password (min 8 characters)")
 
@@ -54,7 +55,7 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     """Schema for login request."""
 
-    email: EmailStr = Field(..., description="User email address")
+    email: DevEmailStr = Field(..., description="User email address")
     password: str = Field(..., description="User password")
 
     model_config = ConfigDict(
