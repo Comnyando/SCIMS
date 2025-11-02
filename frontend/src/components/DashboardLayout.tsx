@@ -11,6 +11,7 @@ import {
   Button,
   Alignment,
 } from "@blueprintjs/core";
+import { Navbar, NavbarGroup, NavbarHeading, Button, Alignment } from "@blueprintjs/core";
 import { useAuth } from "../contexts/AuthContext";
 import { spacing, colors } from "../styles/theme";
 
@@ -43,6 +44,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         backgroundColor: colors.background.secondary,
       }}
     >
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", backgroundColor: colors.background.secondary }}>
       <Navbar>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>SCIMS</NavbarHeading>
@@ -80,3 +85,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     </div>
   );
 }
+          <Button icon="log-out" text="Logout" intent="danger" onClick={handleLogout} />
+        </NavbarGroup>
+      </Navbar>
+      <main style={{ padding: spacing.xl, maxWidth: "1400px", margin: "0 auto" }}>{children}</main>
+    </div>
+  );
+}
+

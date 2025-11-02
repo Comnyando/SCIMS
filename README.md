@@ -259,6 +259,9 @@ All blueprints support:
 - Full CRUD operations (Create, Read, Update, Delete)
 
 *Note: Crafts management (actually executing blueprints to produce items) will be available in Phase 3.2*
+- Planning & Crafting features (Phase 3)
+- Resource Optimization Engine (Phase 4)
+- Analytics & Integration (Phase 5)
 
 See [Implementation Roadmap](planning/implementation-roadmap.md) for the complete development plan.
 

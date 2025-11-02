@@ -182,6 +182,7 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [x] Add API endpoint examples to backend/README.md
 - [x] Add initial user-facing guide sections for inventory UI
 - [~] Onboarding/tour system deferred - will be implemented during UI redesign phase
+- [x] Implement initial onboarding scaffold (tour placeholders)
 
 ---
 
@@ -230,6 +231,11 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [x] Create Celery task for automated craft completion (timed)
 - [x] Write tests for Crafts API
 - [x] Schedule periodic item_history cleanup task (Celery periodic task, runs daily)
+- [ ] Implement ingredient reservation on craft creation
+- [ ] Implement stock deduction on craft completion
+- [ ] Create Celery task for automated craft completion (timed)
+- [ ] Write tests for Crafts API
+- [ ] Schedule periodic item_history cleanup task (Celery periodic task, runs daily)
 
 ### Sub-phase 3.3: Crafts Management Frontend
 

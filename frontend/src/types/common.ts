@@ -12,3 +12,4 @@ export interface PaginatedResponse<T> {
 export interface ApiError {
   detail: string | Record<string, unknown>;
 }
+
