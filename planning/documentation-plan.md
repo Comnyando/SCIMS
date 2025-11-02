@@ -162,7 +162,7 @@ docs/
 ├── user-guide/
 │   ├── overview.md             # System overview
 │   ├── inventory.md            # Inventory management guide
-│   ├── crafting.md             # Crafting and recipes guide
+│   ├── crafting.md             # Crafting and blueprints guide
 │   ├── optimization.md         # Resource optimization guide
 │   ├── goals.md                # Goal tracking guide
 │   └── integrations.md         # External integrations guide
@@ -210,7 +210,7 @@ docs/
 ### Phase 3: Planning & Crafting
 - [ ] Create docs/user-guide/crafting.md
 - [ ] Update root README.md with crafting features
-- [ ] Document recipe creation and management
+- [ ] Document blueprint creation and management
 - [ ] Add crafting workflow examples
 
 ### Phase 4: Optimization Engine

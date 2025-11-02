@@ -15,6 +15,11 @@ from app.models.item import Item
 from app.models.item_stock import ItemStock
 from app.models.item_history import ItemHistory
 from app.models.ship import Ship
+from app.models.blueprint import Blueprint
+from app.models.craft import Craft
+from app.models.craft_ingredient import CraftIngredient
+from app.models.resource_source import ResourceSource
+from app.models.source_verification_log import SourceVerificationLog
 
 __all__ = [
     "Base",
@@ -26,4 +31,9 @@ __all__ = [
     "ItemStock",
     "ItemHistory",
     "Ship",
+    "Blueprint",
+    "Craft",
+    "CraftIngredient",
+    "ResourceSource",
+    "SourceVerificationLog",
 ]

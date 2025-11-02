@@ -12,6 +12,13 @@ import DashboardPage from "./pages/DashboardPage";
 import ItemsPage from "./pages/ItemsPage";
 import LocationsPage from "./pages/LocationsPage";
 import InventoryPage from "./pages/InventoryPage";
+import BlueprintsPage from "./pages/BlueprintsPage";
+import BlueprintDetailPage from "./pages/BlueprintDetailPage";
+import BlueprintFormPage from "./pages/BlueprintFormPage";
+import CraftsPage from "./pages/CraftsPage";
+import CraftFormPage from "./pages/CraftFormPage";
+import CraftDetailPage from "./pages/CraftDetailPage";
+import OptimizationSettingsPage from "./pages/OptimizationSettingsPage";
 
 function App() {
   return (
@@ -49,6 +56,70 @@ function App() {
             element={
               <ProtectedRoute>
                 <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/blueprints"
+            element={
+              <ProtectedRoute>
+                <BlueprintsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/blueprints/new"
+            element={
+              <ProtectedRoute>
+                <BlueprintFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/blueprints/:id/edit"
+            element={
+              <ProtectedRoute>
+                <BlueprintFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/blueprints/:id"
+            element={
+              <ProtectedRoute>
+                <BlueprintDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crafts"
+            element={
+              <ProtectedRoute>
+                <CraftsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crafts/new"
+            element={
+              <ProtectedRoute>
+                <CraftFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crafts/:id"
+            element={
+              <ProtectedRoute>
+                <CraftDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/optimization"
+            element={
+              <ProtectedRoute>
+                <OptimizationSettingsPage />
               </ProtectedRoute>
             }
           />

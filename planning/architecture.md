@@ -39,7 +39,7 @@ This document outlines the architecture for a comprehensive organizational inven
 
 5. **Analytics & Improvement**
    - User consent-based data collection
-   - Recipe/item/usage logging
+   - Blueprint/item/usage logging
    - Community-shared knowledge base
    - Usage analytics for feature improvement
 
@@ -199,7 +199,7 @@ This document outlines the architecture for a comprehensive organizational inven
    - Inventory synchronization
 
 3. **Planning Service**
-   - Craft/recipe management
+   - Craft/blueprint management
    - Goal tracking
    - Progress monitoring
    - Timeline management
@@ -218,7 +218,7 @@ This document outlines the architecture for a comprehensive organizational inven
 
 6. **Analytics Service**
    - Usage tracking (with consent)
-   - Recipe/item logging
+   - Blueprint/item logging
    - Aggregated statistics
    - Report generation
 
@@ -311,7 +311,7 @@ item_history
 
 **Planning & Crafting**
 ```sql
-recipes
+blueprints
 ├── id (UUID, PK)
 ├── name (VARCHAR)
 ├── description (TEXT)
@@ -319,15 +319,15 @@ recipes
 ├── crafting_time_minutes (INTEGER)
 ├── output_item_id (UUID, FK -> items.id)
 ├── output_quantity (DECIMAL)
-├── recipe_data (JSONB) -- ingredients array
+├── blueprint_data (JSONB) -- ingredients array
 ├── created_by (UUID, FK -> users.id)
-├── is_public (BOOLEAN) -- community-shared recipes
+├── is_public (BOOLEAN) -- community-shared blueprints
 ├── usage_count (INTEGER) -- for popularity tracking
 └── created_at (TIMESTAMP)
 
 crafts
 ├── id (UUID, PK)
-├── recipe_id (UUID, FK -> recipes.id)
+├── blueprint_id (UUID, FK -> blueprints.id)
 ├── organization_id (UUID, FK -> organizations.id, NULLABLE)
 ├── requested_by (UUID, FK -> users.id)
 ├── status (VARCHAR) -- planned, in_progress, completed, cancelled
@@ -389,7 +389,7 @@ source_verification_log
 commons_submissions
 ├── id (UUID, PK)
 ├── submitter_id (UUID, FK -> users.id)
-├── entity_type (VARCHAR) -- item, recipe, location, ingredient, taxonomy
+├── entity_type (VARCHAR) -- item, blueprint, location, ingredient, taxonomy
 ├── entity_payload (JSONB) -- normalized shape for proposed entity or update
 ├── source_reference (VARCHAR, NULLABLE) -- URL or notes
 ├── status (VARCHAR) -- pending, approved, rejected, needs_changes, merged
@@ -408,8 +408,8 @@ commons_moderation_actions
 
 commons_entities
 ├── id (UUID, PK)
-├── entity_type (VARCHAR) -- item, recipe, location, ingredient, taxonomy
-├── canonical_id (UUID, NULLABLE) -- FK to items.id/recipes.id/locations.id when applicable
+├── entity_type (VARCHAR) -- item, blueprint, location, ingredient, taxonomy
+├── canonical_id (UUID, NULLABLE) -- FK to items.id/blueprints.id/locations.id when applicable
 ├── data (JSONB) -- denormalized public representation (immutable snapshot per version)
 ├── version (INTEGER)
 ├── is_public (BOOLEAN)
@@ -432,7 +432,7 @@ tags
 entity_aliases
 ├── id (UUID, PK)
 ├── entity_type (VARCHAR)
-├── canonical_id (UUID) -- maps to items/recipes/locations
+├── canonical_id (UUID) -- maps to items/blueprints/locations
 ├── alias (VARCHAR)
 └── UNIQUE(entity_type, canonical_id, alias)
 
@@ -478,7 +478,7 @@ usage_events
 ├── id (UUID, PK)
 ├── user_id (UUID, FK -> users.id, NULLABLE) -- NULL if anonymous
 ├── event_type (VARCHAR) -- view, create, update, delete, search
-├── entity_type (VARCHAR) -- item, recipe, craft, goal
+├── entity_type (VARCHAR) -- item, blueprint, craft, goal
 ├── entity_id (UUID, NULLABLE)
 ├── session_id (VARCHAR)
 ├── ip_address (VARCHAR, NULLABLE) -- hashed for privacy
@@ -486,9 +486,9 @@ usage_events
 ├── metadata (JSONB)
 └── timestamp (TIMESTAMP)
 
-recipe_usage_stats
+blueprint_usage_stats
 ├── id (UUID, PK)
-├── recipe_id (UUID, FK -> recipes.id)
+├── blueprint_id (UUID, FK -> blueprints.id)
 ├── usage_count (INTEGER)
 ├── success_count (INTEGER)
 ├── average_craft_time_minutes (DECIMAL)
@@ -502,11 +502,11 @@ recipe_usage_stats
 - `item_stocks(item_id, location_id)` - UNIQUE index
 - `item_stocks(location_id)` - for location-based queries
 - `crafts(status, organization_id)` - for filtering active crafts
-- `craft_ingredients(craft_id)` - for recipe lookups
+- `craft_ingredients(craft_id)` - for blueprint lookups
 - `item_history(item_id, timestamp DESC)` - for audit trails
-- `recipes(output_item_id)` - for finding recipes by output
+- `blueprints(output_item_id)` - for finding blueprints by output
 - `usage_events(user_id, timestamp DESC)` - for analytics
-- Full-text search on `items(name, description)` and `recipes(name)`
+- Full-text search on `items(name, description)` and `blueprints(name)`
 
 ---
 
@@ -518,7 +518,7 @@ recipe_usage_stats
 
 **Public Read APIs (no auth, rate limited):**
 - GET `/public/items` `/public/items/{id}`
-- GET `/public/recipes` `/public/recipes/{id}`
+- GET `/public/blueprints` `/public/blueprints/{id}`
 - GET `/public/locations` `/public/locations/{id}`
 - GET `/public/tags`
 - GET `/public/search?q=` (full-text over public entities)
@@ -529,7 +529,7 @@ recipe_usage_stats
 - POST `/api/v1/admin/commons/submissions/{id}/reject`
 - POST `/api/v1/admin/commons/submissions/{id}/request-changes`
 - POST `/api/v1/admin/commons/submissions/{id}/merge` (merge map)
-- GET `/api/v1/admin/commons/entities?type=recipe&is_public=true`
+- GET `/api/v1/admin/commons/entities?type=blueprint&is_public=true`
 - PATCH `/api/v1/admin/commons/entities/{id}` (metadata/tags)
 - POST `/api/v1/admin/commons/tags` | DELETE `/api/v1/admin/commons/tags/{id}`
 
@@ -597,7 +597,7 @@ Rate limiting and abuse protection applied to submission and public endpoints.
 ### Caching Strategy
 - Redis caching for:
   - Frequently accessed items
-  - Recipe lookups
+  - Blueprint lookups
   - User sessions
   - Inventory snapshots
   - Public commons catalogs and search results (short TTL + cache bust on publish)
@@ -723,18 +723,18 @@ REACT_APP_WS_URL=ws://localhost:8000/ws
    - Basic inventory display
 
 ### Phase 3: Planning & Crafting (Week 7-9)
-1. Recipes System
-   - Recipe CRUD
-   - Recipe validation
-   - Community recipe sharing
+1. Blueprints System
+   - Blueprint CRUD
+   - Blueprint validation
+   - Community blueprint sharing
 
 2. Crafts Management
-   - Craft creation from recipes
+   - Craft creation from blueprints
    - Status tracking
    - Ingredient reservation
 
 3. Frontend - Planning Interface
-   - Recipe browser/creator
+   - Blueprint browser/creator
    - Craft queue management
    - Progress tracking UI
 
@@ -844,7 +844,7 @@ ManagementProject/
 │   ├── user-guide/
 │   │   ├── overview.md         # System overview
 │   │   ├── inventory.md        # Inventory management guide
-│   │   ├── crafting.md         # Crafting and recipes
+│   │   ├── crafting.md         # Crafting and blueprints
 │   │   ├── optimization.md     # Resource optimization
 │   │   ├── goals.md            # Goal tracking
 │   │   ├── integrations.md      # External integrations
@@ -957,7 +957,7 @@ Must include:
 ### E2E Tests
 - Critical user journeys:
   - User registration → create organization → add inventory → create craft
-  - Recipe creation → craft planning → execution
+  - Blueprint creation → craft planning → execution
   - Integration setup → data import
 
 ### Performance Tests
@@ -990,7 +990,7 @@ Must include:
 - Database query performance
 - Active users/sessions
 - Craft completion rates
-- Recipe usage statistics
+- Blueprint usage statistics
 - Error rates
 
 ### Health Checks
@@ -1003,28 +1003,42 @@ Must include:
 
 ## Future Enhancements (Post-MVP)
 
-1. **Mobile Application**
+1. **Organization Roles & Permissions**
+   - **Quartermaster Role:**
+     - Intermediate role between member and admin
+     - Permissions to allocate/modify organization stock
+     - Can allocate resources to organization crafts and projects
+     - Can approve/reject resource requisitions
+     - Cannot modify org settings or membership
+   - **Resource Requisition System:**
+     - Users can request resources from org or other players
+     - Approval workflow with quartermasters/admins
+     - Multi-level approval support
+     - Automatic fulfillment upon approval
+     - Requisition history and audit trail
+
+2. **Mobile Application**
    - React Native app
    - Offline capability
    - Push notifications
 
-2. **Advanced Analytics**
+3. **Advanced Analytics**
    - Predictive crafting recommendations
    - Market trend analysis
    - Resource price tracking
 
-3. **Real-time Collaboration**
+4. **Real-time Collaboration**
    - Live inventory updates across users
    - Collaborative planning tools
    - Chat/communication features
 
-4. **Marketplace Integration**
+5. **Marketplace Integration**
    - Direct integration with Star Citizen market APIs (when available)
    - Price comparison across sources
    - Automated trading suggestions
 
-5. **AI/ML Features**
-   - Recipe optimization suggestions
+6. **AI/ML Features**
+   - Blueprint optimization suggestions
    - Demand forecasting
    - Anomaly detection in inventory
 
@@ -1036,7 +1050,7 @@ Must include:
 
 - **Data Privacy:** Ensure compliance with GDPR and other privacy regulations, especially for EU users. Consent management is critical.
 
-- **Community Features:** Consider building a community recipe database where users can share and rate recipes, improving the collective knowledge base.
+- **Community Features:** Consider building a community blueprint database where users can share and rate blueprints, improving the collective knowledge base.
 
 - **Scalability:** Start with a monolithic FastAPI application but design services with clear boundaries to enable microservices migration if needed.
 

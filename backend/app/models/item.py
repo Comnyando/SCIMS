@@ -19,6 +19,7 @@ from app.models.base import Base, UUIDPrimaryKeyMixin
 if TYPE_CHECKING:
     from app.models.item_stock import ItemStock
     from app.models.item_history import ItemHistory
+    from app.models.resource_source import ResourceSource
 
 
 class Item(Base, UUIDPrimaryKeyMixin):
@@ -39,7 +40,7 @@ class Item(Base, UUIDPrimaryKeyMixin):
     - Item images/icons
     - Item variants
     - Public/private items
-    - Item templates for recipes
+    - Item templates for blueprints
     """
 
     __tablename__ = "items"
@@ -104,6 +105,12 @@ class Item(Base, UUIDPrimaryKeyMixin):
 
     history: Mapped[list["ItemHistory"]] = relationship(
         "ItemHistory",
+        back_populates="item",
+        cascade="all, delete-orphan",
+    )
+
+    resource_sources: Mapped[list["ResourceSource"]] = relationship(
+        "ResourceSource",
         back_populates="item",
         cascade="all, delete-orphan",
     )

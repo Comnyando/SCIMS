@@ -236,6 +236,29 @@ The inventory management system is now fully operational:
 - **Filtering & Search**: Find items by name, location, or ID
 
 **Next Steps:**
+- Resource Optimization Engine (Phase 4)
+- Analytics & Integration (Phase 5)
+
+### Crafting & Blueprints Features
+
+The Blueprints System allows you to:
+
+- **Create Blueprints**: Define crafting recipes with ingredients, output items, and crafting times
+- **Browse Blueprints**: Search and filter blueprints by category, visibility, and output item
+- **Share Blueprints**: Make blueprints public for community sharing or keep them private
+- **Blueprint Details**: View complete blueprint information including ingredients and usage statistics
+- **Popular Blueprints**: Discover the most-used blueprints from the community
+- **Blueprint Validation**: Automatic validation ensures all referenced items exist
+- **Access Control**: Private blueprints are only visible to creators; public blueprints are visible to all authenticated users
+
+All blueprints support:
+- Multiple ingredients with customizable quantities
+- Optional ingredients for flexible recipes
+- Categorization (Weapons, Components, Food, Materials, etc.)
+- Usage tracking for popularity metrics
+- Full CRUD operations (Create, Read, Update, Delete)
+
+*Note: Crafts management (actually executing blueprints to produce items) will be available in Phase 3.2*
 - Planning & Crafting features (Phase 3)
 - Resource Optimization Engine (Phase 4)
 - Analytics & Integration (Phase 5)

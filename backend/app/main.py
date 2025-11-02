@@ -1,7 +1,18 @@
 ﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routers import auth, items, locations, ships, inventory, canonical_locations
+from app.routers import (
+    auth,
+    items,
+    locations,
+    ships,
+    inventory,
+    canonical_locations,
+    blueprints,
+    crafts,
+    sources,
+    optimization,
+)
 
 app = FastAPI(
     title="SCIMS API",
@@ -25,6 +36,10 @@ app.include_router(locations.router)
 app.include_router(ships.router)
 app.include_router(inventory.router)
 app.include_router(canonical_locations.router)
+app.include_router(blueprints.router)
+app.include_router(crafts.router)
+app.include_router(sources.router)
+app.include_router(optimization.router)
 
 
 @app.get("/")

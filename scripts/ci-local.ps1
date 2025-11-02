@@ -264,26 +264,61 @@ function Test-FrontendBuild {
 function Test-DockerBuilds {
     Write-Status "Testing Docker builds..." "INFO"
     
+    # Enable BuildKit for better build handling and to avoid snapshot issues
+    $env:DOCKER_BUILDKIT = "1"
+    
     try {
         # Backend Docker build
         Write-Status "Building backend Docker image..." "INFO"
-        docker build -f backend/Dockerfile --target production -t scims-backend:test backend/ 2>&1
-        if ($LASTEXITCODE -eq 0) {
+        
+        # Try with BuildKit first (better handling of multi-stage builds)
+        $buildResult = docker build --progress=plain -f backend/Dockerfile --target production -t scims-backend:test backend/ 2>&1
+        $buildExitCode = $LASTEXITCODE
+        
+        if ($buildExitCode -ne 0) {
+            # If build failed, check if it's a snapshot error
+            if ($buildResult -match "parent snapshot.*does not exist" -or $buildResult -match "snapshot") {
+                Write-Status "Docker snapshot error detected, attempting cache cleanup and rebuild..." "WARN"
+                # Prune build cache to clear corrupted snapshots
+                docker builder prune -f 2>&1 | Out-Null
+                # Retry with no cache
+                $buildResult = docker build --no-cache -f backend/Dockerfile --target production -t scims-backend:test backend/ 2>&1
+                $buildExitCode = $LASTEXITCODE
+            }
+        }
+        
+        if ($buildExitCode -eq 0) {
             Write-Status "Backend Docker build passed" "PASS"
             $script:passed += "Docker Backend"
         } else {
             Write-Status "Backend Docker build failed" "FAIL"
+            Write-Status "Build output: $buildResult" "INFO"
             $script:failed += "Docker Backend"
         }
         
         # Frontend Docker build
         Write-Status "Building frontend Docker image..." "INFO"
-        docker build -f frontend/Dockerfile --target production --build-arg VITE_API_URL=http://localhost:8000/api/v1 --build-arg VITE_WS_URL=ws://localhost:8000/ws -t scims-frontend:test frontend/ 2>&1
-        if ($LASTEXITCODE -eq 0) {
+        $buildResult = docker build --progress=plain -f frontend/Dockerfile --target production --build-arg VITE_API_URL=http://localhost:8000/api/v1 --build-arg VITE_WS_URL=ws://localhost:8000/ws -t scims-frontend:test frontend/ 2>&1
+        $buildExitCode = $LASTEXITCODE
+        
+        if ($buildExitCode -ne 0) {
+            # If build failed, check if it's a snapshot error
+            if ($buildResult -match "parent snapshot.*does not exist" -or $buildResult -match "snapshot") {
+                Write-Status "Docker snapshot error detected, attempting cache cleanup and rebuild..." "WARN"
+                # Prune build cache to clear corrupted snapshots
+                docker builder prune -f 2>&1 | Out-Null
+                # Retry with no cache
+                $buildResult = docker build --no-cache -f frontend/Dockerfile --target production --build-arg VITE_API_URL=http://localhost:8000/api/v1 --build-arg VITE_WS_URL=ws://localhost:8000/ws -t scims-frontend:test frontend/ 2>&1
+                $buildExitCode = $LASTEXITCODE
+            }
+        }
+        
+        if ($buildExitCode -eq 0) {
             Write-Status "Frontend Docker build passed" "PASS"
             $script:passed += "Docker Frontend"
         } else {
             Write-Status "Frontend Docker build failed" "FAIL"
+            Write-Status "Build output: $buildResult" "INFO"
             $script:failed += "Docker Frontend"
         }
     } catch {
