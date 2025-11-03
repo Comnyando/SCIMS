@@ -24,6 +24,18 @@ import GoalDetailPage from "./pages/GoalDetailPage";
 import OptimizationSettingsPage from "./pages/OptimizationSettingsPage";
 import AnalyticsConsentPage from "./pages/AnalyticsConsentPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
+import IntegrationsPage from "./pages/IntegrationsPage";
+import IntegrationFormPage from "./pages/IntegrationFormPage";
+import IntegrationDetailPage from "./pages/IntegrationDetailPage";
+import ImportExportPage from "./pages/ImportExportPage";
+import ModerationDashboardPage from "./pages/ModerationDashboardPage";
+import SubmissionDetailPage from "./pages/SubmissionDetailPage";
+import SubmissionFormPage from "./pages/SubmissionFormPage";
+import MySubmissionsPage from "./pages/MySubmissionsPage";
+import PublicEntitiesPage from "./pages/PublicEntitiesPage";
+import PublicEntityDetailPage from "./pages/PublicEntityDetailPage";
+import TagManagerPage from "./pages/TagManagerPage";
+import DuplicateFinderPage from "./pages/DuplicateFinderPage";
 
 function App() {
   return (
@@ -173,6 +185,118 @@ function App() {
             element={
               <ProtectedRoute>
                 <AnalyticsDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/integrations"
+            element={
+              <ProtectedRoute>
+                <IntegrationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/integrations/new"
+            element={
+              <ProtectedRoute>
+                <IntegrationFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/integrations/:id/edit"
+            element={
+              <ProtectedRoute>
+                <IntegrationFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/integrations/:id"
+            element={
+              <ProtectedRoute>
+                <IntegrationDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/import-export"
+            element={
+              <ProtectedRoute>
+                <ImportExportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commons/my-submissions"
+            element={
+              <ProtectedRoute>
+                <MySubmissionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commons/submit"
+            element={
+              <ProtectedRoute>
+                <SubmissionFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commons/submissions/:id/edit"
+            element={
+              <ProtectedRoute>
+                <SubmissionFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commons/public"
+            element={
+              <ProtectedRoute>
+                <PublicEntitiesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commons/public/:entityType/:entityId"
+            element={
+              <ProtectedRoute>
+                <PublicEntityDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/commons/submissions"
+            element={
+              <ProtectedRoute>
+                <ModerationDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/commons/submissions/:id"
+            element={
+              <ProtectedRoute>
+                <SubmissionDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/commons/tags"
+            element={
+              <ProtectedRoute>
+                <TagManagerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/commons/duplicates"
+            element={
+              <ProtectedRoute>
+                <DuplicateFinderPage />
               </ProtectedRoute>
             }
           />

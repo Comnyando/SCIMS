@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql+psycopg://scims:scims@db:5432/scims"
 
-    # Redis
+    # Redis (can be disabled by setting to empty string or unset)
     redis_url: str = "redis://redis:6379/0"
     celery_broker_url: str = "redis://redis:6379/1"
 

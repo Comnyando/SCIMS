@@ -14,6 +14,9 @@ import { CraftsService } from "./crafts";
 import { OptimizationService } from "./optimization";
 import { GoalsService } from "./goals";
 import { AnalyticsService } from "./analytics";
+import { IntegrationsService } from "./integrations";
+import { ImportExportService } from "./import_export";
+import { CommonsService } from "./commons";
 
 // Create a single base client instance to share
 const baseClient = new ApiClient();
@@ -28,6 +31,9 @@ const craftsService = new CraftsService();
 const optimizationService = new OptimizationService();
 const goalsService = new GoalsService();
 const analyticsService = new AnalyticsService();
+const integrationsService = new IntegrationsService();
+const importExportService = new ImportExportService();
+const commonsService = new CommonsService();
 
 // Share the client instance across all services
 authService.client = baseClient.client;
@@ -39,6 +45,9 @@ craftsService.client = baseClient.client;
 optimizationService.client = baseClient.client;
 goalsService.client = baseClient.client;
 analyticsService.client = baseClient.client;
+integrationsService.client = baseClient.client;
+importExportService.client = baseClient.client;
+commonsService.client = baseClient.client;
 
 // Unified API client that combines all services
 class UnifiedApiClient extends AuthService {
@@ -59,6 +68,9 @@ class UnifiedApiClient extends AuthService {
   optimization = optimizationService;
   goals = goalsService;
   analytics = analyticsService;
+  integrations = integrationsService;
+  importExport = importExportService;
+  commons = commonsService;
 }
 
 export const apiClient = new UnifiedApiClient();
