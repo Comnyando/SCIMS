@@ -2,6 +2,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.middleware.analytics import AnalyticsMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
 from app.routers import (
     auth,
     items,
@@ -15,6 +16,13 @@ from app.routers import (
     optimization,
     goals,
     analytics,
+    integrations,
+    webhooks,
+    import_export,
+    commons,
+    admin_commons,
+    admin_tags,
+    public_commons,
 )
 
 app = FastAPI(
@@ -35,6 +43,14 @@ app.add_middleware(
 # Add analytics middleware (logs usage events if user has consented)
 app.add_middleware(AnalyticsMiddleware)
 
+# Add rate limiting middleware
+app.add_middleware(
+    RateLimitMiddleware,
+    default_requests_per_minute=60,
+    submission_requests_per_minute=10,
+    public_requests_per_minute=120,
+)
+
 # Include routers
 app.include_router(auth.router)
 app.include_router(items.router)
@@ -48,6 +64,13 @@ app.include_router(sources.router)
 app.include_router(optimization.router)
 app.include_router(goals.router)
 app.include_router(analytics.router)
+app.include_router(integrations.router)
+app.include_router(webhooks.router)
+app.include_router(import_export.router)
+app.include_router(commons.router)
+app.include_router(admin_commons.router)
+app.include_router(admin_tags.router)
+app.include_router(public_commons.router)
 
 
 @app.get("/")

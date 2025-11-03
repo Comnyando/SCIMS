@@ -41,6 +41,36 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       label: "Analytics",
       icon: "timeline-bar-chart" as const,
     },
+    {
+      path: "/integrations",
+      label: "Integrations",
+      icon: "git-merge" as const,
+    },
+    {
+      path: "/import-export",
+      label: "Import/Export",
+      icon: "exchange" as const,
+    },
+    {
+      path: "/commons/my-submissions",
+      label: "My Submissions",
+      icon: "document" as const,
+    },
+    {
+      path: "/commons/public",
+      label: "Public Commons",
+      icon: "globe" as const,
+    },
+    {
+      path: "/admin/commons/submissions",
+      label: "Moderation",
+      icon: "clipboard" as const,
+    },
+    {
+      path: "/admin/commons/tags",
+      label: "Tag Manager",
+      icon: "tag" as const,
+    },
   ];
 
   return (
@@ -67,7 +97,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             ))}
           </NavbarGroup>
         </NavbarGroup>
-        <NavbarGroup align={Alignment.RIGHT}>
+        <NavbarGroup align={Alignment.END}>
           <span style={{ marginRight: spacing.md, color: colors.text.primary }}>
             {user?.username || user?.email}
           </span>

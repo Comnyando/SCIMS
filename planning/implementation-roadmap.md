@@ -357,11 +357,11 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 6.1: Integration Service Backend
 
 **Tasks:**
-- [ ] Create database migrations for:
+- [x] Create database migrations for:
   - integrations table
   - integration_logs table
-- [ ] Create models and schemas
-- [ ] Implement Integrations API:
+- [x] Create models and schemas
+- [x] Implement Integrations API:
   - GET /api/v1/integrations
   - POST /api/v1/integrations
   - GET /api/v1/integrations/{integration_id}
@@ -369,30 +369,29 @@ This document provides a detailed, phase-by-phase implementation plan with actio
   - DELETE /api/v1/integrations/{integration_id}
   - POST /api/v1/integrations/{integration_id}/test
   - GET /api/v1/integrations/{integration_id}/logs
-- [ ] Create webhook handler endpoint
-- [ ] Implement API key encryption/storage
-- [ ] Create integration framework (base class for integrations)
-- [ ] Write tests
+- [x] Create webhook handler endpoint
+- [x] Implement API key encryption/storage
+- [x] Create integration framework (base class for integrations)
+- [x] Write tests
 
 ### Sub-phase 6.2: Data Import/Export & Frontend
 
 **Tasks:**
-- [ ] Implement CSV import/export:
+- [x] Implement CSV import/export:
   - Items CSV
   - Inventory CSV
   - Recipes CSV
-- [ ] Implement JSON import/export
-- [ ] Create import validation
-- [ ] Create export filters
-- [ ] Write tests
-- [ ] Create frontend Integration management page
-- [ ] Create webhook configuration UI
-- [ ] Create import/export UI
-- [ ] Create integration testing interface
-- [ ] Update docs/user-guide/integrations.md with integration setup
-- [ ] Document import/export formats and procedures
-
-- [ ] Add integration examples and webhook configuration
+- [x] Implement JSON import/export
+- [x] Create import validation
+- [x] Create export filters
+- [x] Write tests
+- [x] Create frontend Integration management page
+- [x] Create webhook configuration UI
+- [x] Create import/export UI
+- [x] Create integration testing interface
+- [x] Update docs/user-guide/integrations.md with integration setup
+- [x] Document import/export formats and procedures
+- [x] Add integration examples and webhook configuration
 
 **Note:** Frontend testing and guided tours deferred until UI redesign phase.
 
@@ -403,34 +402,34 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 6.3: Commons Backend & Public Endpoints
 
 **Tasks:**
-- [ ] Create database migrations:
+- [x] Create database migrations:
   - commons_submissions, commons_moderation_actions
   - commons_entities, commons_entity_tags, tags
   - entity_aliases, duplicate_groups
-- [ ] Implement submission API:
+- [x] Implement submission API:
   - POST /api/v1/commons/submit
   - GET /api/v1/commons/my-submissions
   - PATCH /api/v1/commons/submissions/{id}
-- [ ] Implement admin moderation API:
+- [x] Implement admin moderation API:
   - GET /api/v1/admin/commons/submissions?status=pending
   - POST approve/reject/request-changes/merge
-- [ ] Implement public read APIs:
+- [x] Implement public read APIs:
   - /public/items, /public/recipes, /public/locations, /public/tags, /public/search
-- [ ] Add Redis caching for public catalogs; cache-bust on publish
-- [ ] Add rate limiting and abuse protection
-- [ ] Write backend tests for workflows (submit → approve → publish)
-- [ ] Update docs: data model, API endpoints, moderation lifecycle
+- [x] Add Redis caching for public catalogs; cache-bust on publish
+- [x] Add rate limiting and abuse protection
+- [x] Write backend tests for workflows (submit → approve → publish)
+- [x] Update docs: data model, API endpoints, moderation lifecycle
 
 ### Sub-phase 6.4: Commons Admin Frontend & UX
 
 **Tasks:**
-- [ ] Build Moderation Dashboard (queue, filters, bulk actions)
-- [ ] Build Submission Detail (diff view, actions)
-- [ ] Build Public Entity Manager (list/search/tags/version)
-- [ ] Build Tag Manager (CRUD/merge)
-- [ ] Build Duplicate Finder UI (review/confirm merges)
-- [ ] Add user-facing submission UI with guidelines
-- [ ] Update docs/user-guide with submission guidelines & admin guide
+- [x] Build Moderation Dashboard (queue, filters, bulk actions)
+- [x] Build Submission Detail (diff view, actions)
+- [x] Build Public Entity Manager (list/search/tags/version)
+- [x] Build Tag Manager (CRUD/merge)
+- [x] Build Duplicate Finder UI (review/confirm merges)
+- [x] Add user-facing submission UI with guidelines
+- [x] Update docs/user-guide with submission guidelines & admin guide
 
 **Note:** Frontend testing and guided tours deferred until UI redesign phase.
 

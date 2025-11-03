@@ -14,6 +14,8 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.database import get_db
 from app.models.base import Base
+from app.models.user import User
+from app.core.security import hash_password, create_access_token
 
 # Import all models to ensure they're registered with Base.metadata
 from app.models import (  # noqa: F401
@@ -34,6 +36,15 @@ from app.models import (  # noqa: F401
     goal_item,
     usage_event,
     recipe_usage_stats,
+    integration,
+    integration_log,
+    commons_submission,
+    commons_moderation_action,
+    commons_entity,
+    commons_entity_tag,
+    tag,
+    entity_alias,
+    duplicate_group,
 )
 
 # Use an in-memory SQLite database for tests
@@ -149,7 +160,7 @@ def db_session():
 
 
 @pytest.fixture(scope="function")
-def client(db_session):
+def client(db_session, monkeypatch):
     """Create a test client with overridden database dependency."""
     def override_get_db():
         try:
@@ -157,9 +168,66 @@ def client(db_session):
         finally:
             pass
     
-    app.dependency_overrides[get_db] = override_get_db
+    # Disable Redis in tests to avoid connection attempts and timeouts
+    # This significantly speeds up tests by skipping Redis operations
+    import app.utils.commons_cache
+    import app.middleware.rate_limit
     
-    with TestClient(app) as test_client:
+    def mock_get_redis_client():
+        """Return None to disable Redis in tests."""
+        return None
+    
+    # Override Redis client functions to return None immediately
+    # This bypasses any connection attempts and prevents timeouts
+    # Since RateLimitMiddleware.redis_client is a property that calls get_redis_client(),
+    # mocking the function will work correctly for all middleware instances
+    monkeypatch.setattr(app.utils.commons_cache, "get_redis_client", mock_get_redis_client)
+    monkeypatch.setattr(app.middleware.rate_limit, "get_redis_client", mock_get_redis_client)
+    
+    # Use the app instance from app.main (FastAPI instance)
+    from app.main import app as fastapi_app
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    
+    with TestClient(fastapi_app) as test_client:
         yield test_client
     
-    app.dependency_overrides.clear()
+    fastapi_app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def test_user(db_session):
+    """Create a test user."""
+    user = User(
+        email="testuser@example.com",
+        username="testuser",
+        hashed_password=hash_password("testpass123"),
+        is_active=True,
+        analytics_consent=False,
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+def other_user(db_session):
+    """Create another test user."""
+    user = User(
+        email="otheruser@example.com",
+        username="otheruser",
+        hashed_password=hash_password("testpass123"),
+        is_active=True,
+        analytics_consent=False,
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+def auth_headers(test_user):
+    """Return auth headers for test user."""
+    token = create_access_token({"sub": test_user.id})
+    return {"Authorization": f"Bearer {token}"}
