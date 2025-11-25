@@ -67,19 +67,19 @@ class Location(Base, UUIDPrimaryKeyMixin):
     type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-        comment="Location type: station, ship, player_inventory, warehouse",
+        comment="Location type: station, ship, player_inventory, warehouse, structure",
     )
 
     owner_type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-        comment="Owner type: user, organization, ship",
+        comment="Owner type: user, organization, ship, world, system",
     )
 
     owner_id: Mapped[str] = mapped_column(
         UUID(as_uuid=False),
         nullable=False,
-        comment="Reference to the owner (user, organization, or ship)",
+        comment="Reference to the owner (user, organization, ship, or world placeholder UUID)",
     )
 
     parent_location_id: Mapped[Optional[str]] = mapped_column(

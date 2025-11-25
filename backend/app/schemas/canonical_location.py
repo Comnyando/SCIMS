@@ -7,7 +7,7 @@ such as game stations, planets, or major landmarks.
 
 from datetime import datetime
 from typing import Optional, Any
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator
 
 
 class CanonicalLocationBase(BaseModel):
@@ -15,17 +15,27 @@ class CanonicalLocationBase(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=255, description="Canonical location name")
     type: str = Field(
-        ..., max_length=50, description="Location type: station, ship, player_inventory, warehouse"
+        ...,
+        max_length=50,
+        description="Location type: station, ship, player_inventory, warehouse, structure",
     )
 
     @field_validator("type")
     @classmethod
     def validate_type(cls, v: str) -> str:
         """Validate location type."""
-        valid_types = {"station", "ship", "player_inventory", "warehouse"}
+        valid_types = {"station", "ship", "player_inventory", "warehouse", "structure"}
         if v not in valid_types:
             raise ValueError(f"Location type must be one of: {', '.join(valid_types)}")
         return v
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        """Validate and normalize name."""
+        if not v or not v.strip():
+            raise ValueError("Name cannot be empty or whitespace only")
+        return v.strip()
 
 
 class CanonicalLocationCreate(CanonicalLocationBase):
@@ -38,6 +48,23 @@ class CanonicalLocationCreate(CanonicalLocationBase):
         None,
         description="Flexible location-specific data (JSON). Can include description, planet, system, etc.",
     )
+
+    @field_validator("parent_location_id")
+    @classmethod
+    def validate_parent_location_id(cls, v: Optional[str]) -> Optional[str]:
+        """Convert empty strings to None."""
+        if v is not None and (not v or not v.strip()):
+            return None
+        return v.strip() if v else None
+
+    @model_validator(mode="after")
+    def validate_metadata(self):
+        """Ensure metadata is None if empty dict."""
+        if self.metadata is not None and not isinstance(self.metadata, dict):
+            raise ValueError("Metadata must be a dictionary or null")
+        if self.metadata is not None and len(self.metadata) == 0:
+            self.metadata = None
+        return self
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -66,6 +93,33 @@ class CanonicalLocationUpdate(BaseModel):
     metadata: Optional[dict[str, Any]] = Field(
         None, description="Flexible location-specific data (JSON)"
     )
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: Optional[str]) -> Optional[str]:
+        """Validate and normalize name if provided."""
+        if v is not None:
+            if not v or not v.strip():
+                raise ValueError("Name cannot be empty or whitespace only")
+            return v.strip()
+        return v
+
+    @field_validator("parent_location_id")
+    @classmethod
+    def validate_parent_location_id(cls, v: Optional[str]) -> Optional[str]:
+        """Convert empty strings to None."""
+        if v is not None and (not v or not v.strip()):
+            return None
+        return v.strip() if v else None
+
+    @model_validator(mode="after")
+    def validate_metadata(self):
+        """Ensure metadata is None if empty dict."""
+        if self.metadata is not None and not isinstance(self.metadata, dict):
+            raise ValueError("Metadata must be a dictionary or null")
+        if self.metadata is not None and len(self.metadata) == 0:
+            self.metadata = None
+        return self
 
     model_config = ConfigDict(
         json_schema_extra={

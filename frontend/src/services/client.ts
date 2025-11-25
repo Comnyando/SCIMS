@@ -2,7 +2,11 @@
  * Base Axios API client with authentication interceptors.
  */
 
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 
@@ -24,6 +28,15 @@ export class ApiClient {
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        // Log request for debugging (only in development)
+        if (
+          import.meta.env.DEV &&
+          config.url?.includes("canonical-locations")
+        ) {
+          console.log("Request URL:", config.url);
+          console.log("Request method:", config.method);
+          console.log("Request data:", JSON.stringify(config.data, null, 2));
+        }
         return config;
       },
       (error: AxiosError) => {
@@ -35,7 +48,24 @@ export class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+          _retry?: boolean;
+        };
+
+        // Log error for debugging (only in development)
+        if (
+          import.meta.env.DEV &&
+          originalRequest.url?.includes("canonical-locations")
+        ) {
+          console.error("API Error:", {
+            url: originalRequest.url,
+            method: originalRequest.method,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            requestData: originalRequest.data,
+          });
+        }
 
         // If 401 and not already retried, try to refresh token
         if (error.response?.status === 401 && !originalRequest._retry) {
@@ -87,10 +117,10 @@ export class ApiClient {
     }
 
     try {
-      const response = await axios.post<{ access_token: string; refresh_token: string }>(
-        `${API_BASE_URL}/auth/refresh`,
-        { refresh_token: refreshToken }
-      );
+      const response = await axios.post<{
+        access_token: string;
+        refresh_token: string;
+      }>(`${API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken });
       this.setTokens(response.data.access_token, response.data.refresh_token);
       return true;
     } catch (error) {
@@ -98,4 +128,3 @@ export class ApiClient {
     }
   }
 }
-

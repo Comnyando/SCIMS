@@ -36,11 +36,12 @@ def check_admin_permission(current_user: User) -> bool:
     """
     Check if user has admin permissions to manage canonical locations.
 
-    For now, any authenticated user can create canonical locations.
+    For now, allow all authenticated users (any active user).
     In the future, this can be restricted to admins/moderators based on RBAC.
     """
     # TODO: Implement proper admin/moderator role checking when RBAC is expanded
-    return current_user.is_active
+    # For now, allow all authenticated users
+    return True
 
 
 @router.get("", response_model=dict)
@@ -134,7 +135,19 @@ async def create_canonical_location(
         )
 
     # Validate parent_location_id if provided (must be canonical)
+    # Note: Empty strings are already converted to None by the schema validator
     if location_data.parent_location_id:
+        # Validate UUID format
+        try:
+            import uuid
+
+            uuid.UUID(location_data.parent_location_id)
+        except (ValueError, AttributeError):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid parent_location_id format: '{location_data.parent_location_id}' is not a valid UUID",
+            )
+
         parent = (
             db.query(Location)
             .filter(
@@ -167,11 +180,13 @@ async def create_canonical_location(
     # Create canonical location
     # Canonical locations use owner_type="system" and a placeholder owner_id
     # In a production system, you might have a system user or handle this differently
+    from app.core.constants import SYSTEM_OWNER_UUID
+
     new_location = Location(
         name=location_data.name,
         type=location_data.type,
         owner_type="system",  # Canonical locations are system-owned
-        owner_id="00000000-0000-0000-0000-000000000000",  # Placeholder system UUID
+        owner_id=SYSTEM_OWNER_UUID,
         parent_location_id=location_data.parent_location_id,
         is_canonical=True,
         created_by=current_user.id,
