@@ -192,19 +192,26 @@ dc down
 
 ## Documentation
 
-- [Installation Guide](docs/getting-started/installation.md) - Detailed installation instructions
-- [Backend README](backend/README.md) - Backend development guide
-- [Frontend README](frontend/README.md) - Frontend development guide
-- [Architecture Documentation](planning/architecture.md) - System architecture
-- [Implementation Roadmap](planning/implementation-roadmap.md) - Development timeline
+Comprehensive documentation is available in the [docs/](docs/) directory. See [Documentation Index](docs/README.md) for a complete guide.
+
+### Quick Links
+
+- [Installation Guide](docs/getting-started/installation.md) - Complete setup instructions
+- [API Usage Examples](docs/examples/api-usage.md) - Practical API examples
+- [Deployment Guide](docs/deployment/README.md) - Production deployment
+- [Testing Guide](docs/development/testing.md) - Running and writing tests
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute
 
 ### User Guides
 
-- [Inventory Management Guide](docs/user-guide/inventory.md) - Managing items and locations
-- [Crafting Guide](docs/user-guide/crafting.md) - Creating and using blueprints
-- [Goals Guide](docs/user-guide/goals.md) - Setting and tracking goals
-- [Analytics & Privacy Guide](docs/user-guide/analytics.md) - Analytics features and consent management
-- [Optimization Guide](docs/user-guide/optimization.md) - Resource optimization features
+- [Inventory Management](docs/user-guide/inventory.md) - Managing items and locations
+- [Crafting System](docs/user-guide/crafting.md) - Creating and using blueprints
+- [Goals & Progress](docs/user-guide/goals.md) - Setting and tracking goals
+- [Analytics & Privacy](docs/user-guide/analytics.md) - Analytics features and consent
+- [Resource Optimization](docs/user-guide/optimization.md) - Optimization engine
+- [Integrations](docs/user-guide/integrations.md) - External integrations
+- [Public Commons](docs/user-guide/commons.md) - Community-shared content
+- [FAQ](docs/user-guide/faq.md) - Frequently asked questions
 
 ## API Documentation
 
@@ -293,20 +300,43 @@ The Analytics System provides:
 - **Transparent Control**: Easy consent management with clear explanations of data collection
 - **Analytics Dashboard**: Visualize usage patterns and trends
 
-**Next Steps:**
-- Integration Framework (Phase 6)
+**Phase 6: Integration Framework** ✅
+- ✅ Integration service backend
+- ✅ Data import/export (CSV, JSON)
+- ✅ Webhook support
+- ✅ Integration management UI
+
+**Phase 6.5: Public Commons & Moderation** ✅
+- ✅ Commons submission system
+- ✅ Moderation workflow
+- ✅ Public API endpoints
+- ✅ Tag management
+- ✅ Duplicate detection
+
+**Phase 7: Polish & Production Readiness** 🚧
+- ✅ Sub-phase 7.1: Comprehensive Testing (82% coverage)
+- 🚧 Sub-phase 7.2: Documentation (in progress)
+- ⏳ Sub-phase 7.3: Security & Performance
+- ⏳ Sub-phase 7.4: Production Deployment
 
 See [Implementation Roadmap](planning/implementation-roadmap.md) for the complete development plan.
 
 ## Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
-1. Review the [Architecture Documentation](planning/architecture.md)
-2. Check the [Implementation Roadmap](planning/implementation-roadmap.md) for current priorities
-3. Follow the code style and conventions
-4. Write tests for new features
-5. Update documentation as needed
+- Code of conduct
+- Development workflow
+- Coding standards
+- Testing requirements
+- Pull request process
+
+Quick start:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Write tests
+5. Submit a pull request
 
 ## License
 

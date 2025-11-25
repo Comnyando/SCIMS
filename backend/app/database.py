@@ -15,10 +15,10 @@ from app.config import settings
 
 # Configure connection pool
 # These settings balance performance and resource usage
-# Can be tuned via environment variables in the future if needed
+# Increased for better concurrent request handling
 pool_config = {
-    "pool_size": 5,  # Number of connections to maintain in the pool
-    "max_overflow": 10,  # Max connections beyond pool_size
+    "pool_size": 20,  # Number of connections to maintain in the pool (increased from 5)
+    "max_overflow": 30,  # Max connections beyond pool_size (increased from 10)
     "pool_timeout": 30,  # Seconds to wait for a connection from the pool
     "pool_recycle": 3600,  # Recycle connections after 1 hour (prevents stale connections)
     "pool_pre_ping": True,  # Verify connections before using them (handles DB restarts)

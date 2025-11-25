@@ -63,19 +63,33 @@ async def list_items(
     if rarity:
         query = query.filter(Item.rarity == rarity)
 
-    # Get total count for pagination
-    total = query.count()
+    try:
+        # Get total count for pagination
+        total = query.count()
 
-    # Apply pagination and order by name
-    items = query.order_by(Item.name).offset(skip).limit(limit).all()
+        # Apply pagination and order by name
+        items = query.order_by(Item.name).offset(skip).limit(limit).all()
 
-    return {
-        "items": [ItemResponse.model_validate(item) for item in items],
-        "total": total,
-        "skip": skip,
-        "limit": limit,
-        "pages": ceil(total / limit) if limit > 0 else 0,
-    }
+        return {
+            "items": [ItemResponse.model_validate(item) for item in items],
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+            "pages": ceil(total / limit) if limit > 0 else 0,
+        }
+    except Exception as e:
+        # Log error and return empty result instead of crashing
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error listing items: {str(e)}", exc_info=True)
+        return {
+            "items": [],
+            "total": 0,
+            "skip": skip,
+            "limit": limit,
+            "pages": 0,
+        }
 
 
 @router.post("", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)

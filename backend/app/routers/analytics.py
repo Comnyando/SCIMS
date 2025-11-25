@@ -89,18 +89,25 @@ async def get_usage_stats(
         )
 
     # Calculate period
-    period_end = datetime.now().date()
+    from datetime import timezone
+
+    period_end = datetime.now(timezone.utc).date()
     period_start = period_end - timedelta(days=period_days)
 
     # Only count events from users who have consented
+    # Convert dates to datetimes for proper comparison with timezone-aware datetimes
+    period_start_dt = datetime.combine(period_start, datetime.min.time()).replace(
+        tzinfo=timezone.utc
+    )
+    period_end_dt = datetime.combine(period_end, datetime.max.time()).replace(tzinfo=timezone.utc)
     consented_events = (
         db.query(UsageEvent)
         .join(User, UsageEvent.user_id == User.id)
         .filter(
             and_(
                 User.analytics_consent == True,  # noqa: E712
-                UsageEvent.created_at >= period_start,
-                UsageEvent.created_at <= period_end + timedelta(days=1),  # Include entire end day
+                UsageEvent.created_at >= period_start_dt,
+                UsageEvent.created_at <= period_end_dt,
             )
         )
     )

@@ -111,18 +111,23 @@ class TestUsageStats:
         self, client, consent_headers, test_user_with_consent, db_session
     ):
         """Test getting usage stats with consent."""
-        # Create some test events
+        from datetime import datetime, timezone
+
+        # Create some test events with explicit timestamps to ensure they're within the period
+        now = datetime.now(timezone.utc)
         event1 = UsageEvent(
             user_id=test_user_with_consent.id,
             event_type="blueprint_used",
             entity_type="blueprint",
             entity_id="test-blueprint-id",
+            created_at=now,
         )
         event2 = UsageEvent(
             user_id=test_user_with_consent.id,
             event_type="goal_created",
             entity_type="goal",
             entity_id="test-goal-id",
+            created_at=now,
         )
         db_session.add_all([event1, event2])
         db_session.commit()

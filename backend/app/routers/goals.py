@@ -348,7 +348,7 @@ async def list_goals(
 
     # Apply access control: only goals user created or organization goals they're in
     user_org_ids = [
-        m.organization_id
+        str(m.organization_id)
         for m in db.query(OrganizationMember)
         .filter(OrganizationMember.user_id == current_user.id)
         .all()

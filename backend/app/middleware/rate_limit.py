@@ -131,11 +131,20 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             else:
                 current_count = int(current_count)
                 if current_count >= rate_limit:
-                    # Rate limit exceeded
-                    raise HTTPException(
+                    # Rate limit exceeded - return 429 response directly
+                    from fastapi.responses import JSONResponse
+
+                    return JSONResponse(
                         status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                        detail=f"Rate limit exceeded: {rate_limit} requests per minute. Please try again later.",
-                        headers={"Retry-After": "60"},
+                        content={
+                            "detail": f"Rate limit exceeded: {rate_limit} requests per minute. Please try again later."
+                        },
+                        headers={
+                            "Retry-After": "60",
+                            "X-RateLimit-Limit": str(rate_limit),
+                            "X-RateLimit-Remaining": "0",
+                            "X-RateLimit-Reset": str((minute + 1) * 60),
+                        },
                     )
                 # Increment counter
                 self.redis_client.incr(rate_limit_key)

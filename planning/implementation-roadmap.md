@@ -440,60 +440,60 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 ### Sub-phase 7.1: Comprehensive Testing
 
 **Tasks:**
-- [ ] Achieve >80% backend test coverage
-- [ ] Write integration tests for critical flows:
+- [x] Achieve >80% backend test coverage
+- [x] Write integration tests for critical flows:
   - User registration → org creation → inventory → craft
   - Recipe sharing → craft planning → execution
   - Integration setup → data import
-- [ ] Create test data fixtures
-- [ ] Document testing procedures
+- [x] Create test data fixtures
+- [x] Document testing procedures
 
 **Note:** Frontend test coverage and onboarding/tutorial flows deferred until UI redesign phase.
 
 ### Sub-phase 7.2: Documentation
 
 **Tasks:**
-- [ ] Complete OpenAPI/Swagger documentation
-- [ ] Write user documentation:
+- [x] Complete OpenAPI/Swagger documentation
+- [x] Write user documentation:
   - Getting started guide
   - Feature guides
   - FAQ
-- [ ] Write developer documentation:
+- [x] Write developer documentation:
   - Setup guide
   - Architecture overview
   - Contributing guidelines
-- [ ] Create API usage examples
-- [ ] Create deployment guides
-- [ ] Update all README files (root, backend, frontend)
-- [ ] Review and ensure all documentation is comprehensive
-- [ ] Add code examples throughout documentation
-- [ ] Create docs/README.md as documentation index
-- [ ] Add troubleshooting sections to all guides
-- [ ] Document deployment procedures in docs/deployment/
-- [ ] Finalize all user guide sections
-- [ ] Publish in-app tutorial content and screenshots to docs/user-guide/onboarding.md
-- [ ] Add email provider setup guide: SPF/DKIM/DMARC, webhooks, env vars
-- [ ] Add Public Commons documentation: submission, moderation, publishing, takedown
+- [x] Create API usage examples
+- [x] Create deployment guides
+- [x] Update all README files (root, backend, frontend)
+- [x] Review and ensure all documentation is comprehensive
+- [x] Add code examples throughout documentation
+- [x] Create docs/README.md as documentation index
+- [x] Add troubleshooting sections to all guides
+- [x] Document deployment procedures in docs/deployment/
+- [x] Finalize all user guide sections
+- [ ] Publish in-app tutorial content and screenshots to docs/user-guide/onboarding.md (deferred - UI redesign phase)
+- [x] Add email provider setup guide: SPF/DKIM/DMARC, webhooks, env vars
+- [x] Add Public Commons documentation: submission, moderation, publishing, takedown
 
 ### Sub-phase 7.3: Security & Performance
 
 **Tasks:**
-- [ ] Security audit:
+- [x] Security audit:
   - Dependency vulnerability scan
   - SQL injection testing
   - XSS testing
   - Authentication bypass testing
-- [ ] Implement rate limiting
-- [ ] Add security headers
-- [ ] Performance optimization:
+- [x] Implement rate limiting
+- [x] Add security headers
+- [x] Performance optimization:
   - Database query optimization
   - Add Redis caching for frequent queries
   - Frontend bundle optimization
   - Image optimization
-- [ ] Load testing with Locust/k6
-- [ ] Fix performance bottlenecks
-- [ ] Validate email bounces/complaints webhook and suppression list behavior
-- [ ] Validate backup/restore drill in staging (weekly automated restore)
+- [x] Load testing with Locust/k6
+- [ ] Fix performance bottlenecks (as identified)
+- [x] Validate email bounces/complaints webhook and suppression list behavior
+- [x] Validate backup/restore drill in staging (weekly automated restore)
 
 ### Sub-phase 7.4: Production Deployment
 
@@ -530,6 +530,7 @@ This document provides a detailed, phase-by-phase implementation plan with actio
 - [ ] Configure rate limiting for /public and /commons endpoints
 - [ ] Setup cache-busting hooks for publish/unpublish
 - [ ] Add admin roles (curator/moderator) and RBAC policies
+- [ ] UEC Value into 'Org Points' when donated into org bank
 
 ---
 

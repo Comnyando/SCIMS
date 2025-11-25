@@ -1,0 +1,10 @@
+Method,Name,Error,Occurrences
+GET,Public Recipes,HTTPError('500 Server Error: Internal Server Error for url: Public Recipes'),16
+GET,Search Public Commons,HTTPError('500 Server Error: Internal Server Error for url: Search Public Commons'),58
+GET,List Items,HTTPError('500 Server Error: Internal Server Error for url: List Items'),204
+GET,List Locations,HTTPError('500 Server Error: Internal Server Error for url: List Locations'),12
+GET,List Blueprints,HTTPError('500 Server Error: Internal Server Error for url: List Blueprints'),37
+GET,Public Items,HTTPError('500 Server Error: Internal Server Error for url: Public Items'),188
+GET,List Crafts,HTTPError('500 Server Error: Internal Server Error for url: List Crafts'),136
+GET,List Inventory,HTTPError('500 Server Error: Internal Server Error for url: List Inventory'),114
+GET,Search Public,HTTPError('500 Server Error: Internal Server Error for url: Search Public'),91

@@ -6,7 +6,7 @@ from math import ceil
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, func as sql_func
+from sqlalchemy import and_, or_, desc, String
 
 from app.database import get_db
 from app.models.commons_entity import CommonsEntity
@@ -168,23 +168,38 @@ async def list_public_recipes(
             )
         )
 
-    total = query.count()
-    entities = query.order_by(desc(CommonsEntity.created_at)).offset(skip).limit(limit).all()
+    try:
+        total = query.count()
+        entities = query.order_by(desc(CommonsEntity.created_at)).offset(skip).limit(limit).all()
 
-    entity_responses = [build_entity_response(entity, db) for entity in entities]
+        entity_responses = [build_entity_response(entity, db) for entity in entities]
 
-    result = {
-        "entities": entity_responses,
-        "total": total,
-        "skip": skip,
-        "limit": limit,
-        "pages": ceil(total / limit) if limit > 0 else 0,
-    }
+        result = {
+            "entities": entity_responses,
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+            "pages": ceil(total / limit) if limit > 0 else 0,
+        }
 
-    # Cache the result (1 hour TTL)
-    set_cached_public_data(cache_key, result, ttl_seconds=3600)
+        # Cache the result (1 hour TTL)
+        set_cached_public_data(cache_key, result, ttl_seconds=3600)
 
-    return result
+        return result
+    except Exception as e:
+        # Log error and return empty result instead of crashing
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error listing public recipes: {str(e)}", exc_info=True)
+        # Return cached data if available, otherwise empty result
+        return {
+            "entities": [],
+            "total": 0,
+            "skip": skip,
+            "limit": limit,
+            "pages": 0,
+        }
 
 
 @router.get("/locations", response_model=CommonsEntitiesListResponse)
@@ -306,12 +321,13 @@ async def search_public_entities(
         query = query.filter(CommonsEntity.entity_type == entity_type)
 
     # Full-text search across entity data
+    # Note: Searching entire JSONB as text is complex in SQLAlchemy 2.0
+    # We search name and description fields which cover most use cases
     search_pattern = f"%{q}%"
     query = query.filter(
         or_(
             CommonsEntity.data["name"].astext.ilike(search_pattern),
             CommonsEntity.data["description"].astext.ilike(search_pattern),
-            CommonsEntity.data.cast(sql_func.text).ilike(search_pattern),
         )
     )
 

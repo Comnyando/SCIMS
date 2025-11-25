@@ -231,3 +231,214 @@ def auth_headers(test_user):
     """Return auth headers for test user."""
     token = create_access_token({"sub": test_user.id})
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def test_organization(test_user, db_session):
+    """Create a test organization with test_user as owner."""
+    from app.models.organization import Organization
+    from app.models.organization_member import OrganizationMember
+    
+    org = Organization(
+        name="Test Organization",
+        slug="test-org",
+        description="A test organization",
+    )
+    db_session.add(org)
+    db_session.flush()
+    
+    membership = OrganizationMember(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="owner",
+    )
+    db_session.add(membership)
+    db_session.commit()
+    db_session.refresh(org)
+    return org
+
+
+@pytest.fixture
+def test_items(db_session):
+    """Create a set of test items."""
+    from app.models.item import Item
+    
+    items = [
+        Item(name="Iron Ore", description="Raw iron ore", category="Materials"),
+        Item(name="Steel Ingot", description="Refined steel", category="Components"),
+        Item(name="Component A", description="Component A", category="Components"),
+        Item(name="Component B", description="Component B", category="Components"),
+    ]
+    db_session.add_all(items)
+    db_session.commit()
+    for item in items:
+        db_session.refresh(item)
+    return items
+
+
+@pytest.fixture
+def test_location(test_user, db_session):
+    """Create a test location owned by test_user."""
+    from app.models.location import Location
+    
+    location = Location(
+        name="Test Station",
+        type="station",
+        owner_type="user",
+        owner_id=test_user.id,
+    )
+    db_session.add(location)
+    db_session.commit()
+    db_session.refresh(location)
+    return location
+
+
+@pytest.fixture
+def test_org_location(test_organization, test_user, db_session):
+    """Create a test location owned by test_organization."""
+    from app.models.location import Location
+    
+    location = Location(
+        name="Org Station",
+        type="station",
+        owner_type="organization",
+        owner_id=test_organization.id,
+    )
+    db_session.add(location)
+    db_session.commit()
+    db_session.refresh(location)
+    return location
+
+
+@pytest.fixture
+def test_item_stocks(test_items, test_location, test_user, db_session):
+    """Create test item stocks with sufficient quantities."""
+    from app.models.item_stock import ItemStock
+    from decimal import Decimal
+    
+    stocks = []
+    for item in test_items:
+        stock = ItemStock(
+            item_id=item.id,
+            location_id=test_location.id,
+            quantity=Decimal("100.0"),
+            reserved_quantity=Decimal("0.0"),
+            updated_by=test_user.id,
+        )
+        stocks.append(stock)
+    
+    db_session.add_all(stocks)
+    db_session.commit()
+    for stock in stocks:
+        db_session.refresh(stock)
+    return stocks
+
+
+@pytest.fixture
+def test_blueprint(test_user, test_items, db_session):
+    """Create a test blueprint."""
+    from app.models.blueprint import Blueprint
+    from decimal import Decimal
+    
+    blueprint = Blueprint(
+        name="Test Blueprint",
+        description="A test blueprint",
+        category="Crafting",
+        crafting_time_minutes=60,
+        output_item_id=test_items[1].id,  # Steel Ingot
+        output_quantity=Decimal("1.0"),
+        blueprint_data={
+            "ingredients": [
+                {"item_id": test_items[0].id, "quantity": 10.0, "optional": False}
+            ]
+        },
+        created_by=test_user.id,
+        is_public=False,
+        usage_count=0,
+    )
+    db_session.add(blueprint)
+    db_session.commit()
+    db_session.refresh(blueprint)
+    return blueprint
+
+
+@pytest.fixture
+def test_public_blueprint(test_user, test_items, db_session):
+    """Create a public test blueprint."""
+    from app.models.blueprint import Blueprint
+    from decimal import Decimal
+    
+    blueprint = Blueprint(
+        name="Public Blueprint",
+        description="A publicly shared blueprint",
+        category="Crafting",
+        crafting_time_minutes=30,
+        output_item_id=test_items[1].id,
+        output_quantity=Decimal("1.0"),
+        blueprint_data={
+            "ingredients": [
+                {"item_id": test_items[0].id, "quantity": 5.0, "optional": False}
+            ]
+        },
+        created_by=test_user.id,
+        is_public=True,
+        usage_count=0,
+    )
+    db_session.add(blueprint)
+    db_session.commit()
+    db_session.refresh(blueprint)
+    return blueprint
+
+
+@pytest.fixture
+def test_craft(test_user, test_blueprint, test_location, db_session):
+    """Create a test craft."""
+    from app.models.craft import Craft, CRAFT_STATUS_PLANNED
+    from app.models.craft_ingredient import CraftIngredient, INGREDIENT_STATUS_PENDING, SOURCE_TYPE_STOCK
+    from decimal import Decimal
+    
+    craft = Craft(
+        blueprint_id=test_blueprint.id,
+        requested_by=test_user.id,
+        status=CRAFT_STATUS_PLANNED,
+        priority=5,
+        output_location_id=test_location.id,
+    )
+    db_session.add(craft)
+    db_session.flush()
+    
+    # Create craft ingredients
+    ingredients_data = test_blueprint.blueprint_data["ingredients"]
+    for ingredient_data in ingredients_data:
+        craft_ingredient = CraftIngredient(
+            craft_id=craft.id,
+            item_id=ingredient_data["item_id"],
+            required_quantity=Decimal(str(ingredient_data["quantity"])),
+            source_location_id=test_location.id,
+            source_type=SOURCE_TYPE_STOCK,
+            status=INGREDIENT_STATUS_PENDING,
+        )
+        db_session.add(craft_ingredient)
+    
+    db_session.commit()
+    db_session.refresh(craft)
+    return craft
+
+
+@pytest.fixture
+def test_integration(test_user, db_session):
+    """Create a test integration."""
+    from app.models.integration import Integration
+    
+    integration = Integration(
+        name="Test Integration",
+        type="webhook",
+        status="active",
+        webhook_url="https://example.com/webhook",
+        config={"auto_sync": True},
+        user_id=test_user.id,
+    )
+    db_session.add(integration)
+    db_session.commit()
+    db_session.refresh(integration)
+    return integration
