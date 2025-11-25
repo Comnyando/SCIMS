@@ -21,6 +21,7 @@ from app.database import get_db
 from app.models.location import Location
 from app.models.organization_member import OrganizationMember
 from app.core.dependencies import get_current_active_user
+from app.core.constants import WORLD_OWNER_UUID
 from app.models.user import User
 from app.schemas.location import LocationCreate, LocationUpdate, LocationResponse
 from app.config import settings
@@ -40,7 +41,18 @@ def check_location_access(
 
     Returns True if user has access, False otherwise.
     For organization-owned locations, checks membership and role.
+    World-owned locations are publicly accessible.
+    Canonical locations are publicly readable but require admin for write operations.
     """
+    # Canonical locations: publicly readable to all authenticated users
+    # Write operations require admin permission (checked separately)
+    if location.is_canonical:
+        return True
+
+    # World-owned locations: publicly accessible to all authenticated users
+    if location.owner_type == "world":
+        return True
+
     # User-owned locations: user must be the owner
     if location.owner_type == "user":
         return location.owner_id == current_user.id
@@ -71,6 +83,10 @@ def check_location_access(
         # TODO: Check ship ownership when ship router is implemented
         return False
 
+    # System-owned locations (canonical locations use this)
+    if location.owner_type == "system":
+        return True
+
     return False
 
 
@@ -79,7 +95,7 @@ async def list_locations(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(50, ge=1, le=100, description="Maximum number of records to return"),
     owner_type: Optional[str] = Query(
-        None, description="Filter by owner type: user, organization, ship"
+        None, description="Filter by owner type: user, organization, ship, world, system"
     ),
     owner_id: Optional[str] = Query(None, description="Filter by owner ID"),
     type: Optional[str] = Query(None, alias="location_type", description="Filter by location type"),
@@ -116,11 +132,17 @@ async def list_locations(
 
     # Filter to only accessible locations
     # Canonical locations are always accessible (public read)
-    canonical_locations = Location.is_canonical == True
+    canonical_locations = Location.is_canonical == True  # noqa: E712
 
     # User-owned locations
     user_owned = Location.owner_type == "user"
     user_owned = user_owned & (Location.owner_id == current_user.id)
+
+    # World-owned non-canonical locations (private to creator)
+    # These are user-created world structures that should remain private
+    world_owned_private = Location.owner_type == "world"
+    world_owned_private = world_owned_private & (Location.is_canonical == False)  # noqa: E712
+    world_owned_private = world_owned_private & (Location.created_by == current_user.id)
 
     # Organization-owned locations where user is a member
     org_memberships = (
@@ -138,22 +160,57 @@ async def list_locations(
 
         org_owned = literal(False)
 
-    # Combine filters (canonical OR user-owned OR org-owned)
-    query = query.filter(or_(canonical_locations, user_owned, org_owned))
+    # Combine filters (canonical OR user-owned OR world-owned-private OR org-owned)
+    # Note: Canonical locations are public, but world-owned non-canonical are private to creator
+    query = query.filter(or_(canonical_locations, user_owned, world_owned_private, org_owned))
 
     # Get total count
     total = query.count()
 
     # Apply pagination and order by name
-    locations = query.order_by(Location.name).offset(skip).limit(limit).all()
+    # Eagerly load parent_location relationship for parent name display
+    from sqlalchemy.orm import joinedload
+
+    locations = (
+        query.options(joinedload(Location.parent_location))
+        .order_by(Location.name)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
     # Filter in-memory for fine-grained access control
     accessible_locations = [
         loc for loc in locations if check_location_access(loc, current_user, db, "viewer")
     ]
 
+    # Build response with parent location names and child locations
+    location_responses = []
+    for loc in accessible_locations:
+        # Convert Location model to dict, excluding child_locations relationship
+        # We'll add child_locations separately as ChildLocationInfo objects
+        # Use model_validate with exclude to skip the relationship
+        loc_dict = LocationResponse.model_validate(loc, from_attributes=True).model_dump(
+            exclude={"child_locations"}
+        )
+        loc_dict["parent_location_name"] = loc.parent_location.name if loc.parent_location else None
+
+        # Fetch child locations (name and id only)
+        # Query returns tuples: (id, name)
+        child_locations = (
+            db.query(Location.id, Location.name).filter(Location.parent_location_id == loc.id).all()
+        )
+        # Convert tuples to ChildLocationInfo format
+        loc_dict["child_locations"] = [
+            {"id": str(child_id), "name": child_name} for child_id, child_name in child_locations
+        ]
+
+        # Validate the complete response to ensure it matches the schema
+        location_response = LocationResponse.model_validate(loc_dict)
+        location_responses.append(location_response.model_dump())
+
     return {
-        "locations": [LocationResponse.model_validate(loc) for loc in accessible_locations],
+        "locations": location_responses,
         "total": len(accessible_locations),
         "skip": skip,
         "limit": limit,
@@ -172,6 +229,7 @@ async def create_location(
 
     For user-owned locations: owner_id must match current user.
     For organization-owned locations: user must be a member with 'member' role or higher.
+    For world-owned locations: owner_id is optional (uses placeholder UUID).
     """
     # Validate ownership
     if location_data.owner_type == "user":
@@ -206,9 +264,25 @@ async def create_location(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot directly create ship-owned locations. Create a ship instead.",
         )
+    elif location_data.owner_type == "world":
+        # World-owned locations use a placeholder UUID (universe-owned)
+        if not location_data.owner_id:
+            location_data.owner_id = WORLD_OWNER_UUID
 
     # Validate parent_location_id if provided
+    # Note: Empty strings are already converted to None by the schema validator
     if location_data.parent_location_id:
+        # Validate UUID format
+        try:
+            import uuid
+
+            uuid.UUID(location_data.parent_location_id)
+        except (ValueError, AttributeError):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid parent_location_id format: '{location_data.parent_location_id}' is not a valid UUID",
+            )
+
         parent = db.query(Location).filter(Location.id == location_data.parent_location_id).first()
         if not parent:
             raise HTTPException(
@@ -223,7 +297,19 @@ async def create_location(
             )
 
     # Validate canonical_location_id if provided
+    # Note: Empty strings are already converted to None by the schema validator
     if location_data.canonical_location_id:
+        # Validate UUID format
+        try:
+            import uuid
+
+            uuid.UUID(location_data.canonical_location_id)
+        except (ValueError, AttributeError):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid canonical_location_id format: '{location_data.canonical_location_id}' is not a valid UUID",
+            )
+
         canonical = (
             db.query(Location)
             .filter(
@@ -246,6 +332,7 @@ async def create_location(
         parent_location_id=location_data.parent_location_id,
         canonical_location_id=location_data.canonical_location_id,
         is_canonical=False,  # User-created locations are never canonical
+        created_by=current_user.id,  # Track who created this location
         meta=location_data.metadata,
     )
 
@@ -306,12 +393,16 @@ async def update_location(
             detail=f"Location with id '{location_id}' not found",
         )
 
-    # Canonical locations cannot be updated through this endpoint (use canonical locations API)
+    # Canonical locations require admin permission to update
     if location.is_canonical:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot update canonical locations through this endpoint. Use /api/v1/canonical-locations",
-        )
+        from app.routers.canonical_locations import check_admin_permission
+
+        if not check_admin_permission(current_user):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permission denied to update canonical locations. Admin access required.",
+            )
+        # Allow update through this endpoint if admin (for consistency)
 
     # Check access (require 'member' role for updates)
     required_role = "viewer" if location.owner_type == "user" else "member"
@@ -391,6 +482,7 @@ async def delete_location(
 
     Requires 'admin' role or higher for organization-owned locations.
     Only the owner can delete user-owned locations.
+    Canonical locations require admin permission.
     """
     location = db.query(Location).filter(Location.id == location_id).first()
 
@@ -400,13 +492,23 @@ async def delete_location(
             detail=f"Location with id '{location_id}' not found",
         )
 
-    # Check access (require 'admin' role for deletion)
-    required_role = "viewer" if location.owner_type == "user" else "admin"
-    if not check_location_access(location, current_user, db, required_role):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied to delete this location",
-        )
+    # Canonical locations require admin permission to delete
+    if location.is_canonical:
+        from app.routers.canonical_locations import check_admin_permission
+
+        if not check_admin_permission(current_user):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permission denied to delete canonical locations. Admin access required.",
+            )
+    else:
+        # Check access for non-canonical locations (require 'admin' role for deletion)
+        required_role = "viewer" if location.owner_type == "user" else "admin"
+        if not check_location_access(location, current_user, db, required_role):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied to delete this location",
+            )
 
     db.delete(location)
     db.commit()

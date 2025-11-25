@@ -213,6 +213,10 @@ async def list_public_locations(
     """
     List public locations from the commons.
 
+    Includes both:
+    - Canonical locations (from Location table with is_canonical=True)
+    - CommonsEntity locations (user-submitted public locations)
+
     No authentication required - this is a public read-only endpoint.
     Results are cached for 1 hour.
     """
@@ -222,38 +226,79 @@ async def list_public_locations(
     if cached_data:
         return cached_data
 
-    query = db.query(CommonsEntity).filter(
+    from app.models.location import Location
+
+    # Query canonical locations from Location table
+    canonical_query = db.query(Location).filter(Location.is_canonical == True)  # noqa: E712
+
+    # Query CommonsEntity locations
+    commons_query = db.query(CommonsEntity).filter(
         and_(
             CommonsEntity.entity_type == "location",
             CommonsEntity.is_public == True,  # noqa: E712
         )
     )
 
-    if tag:
-        tag_obj = db.query(Tag).filter(Tag.name == tag).first()
-        if tag_obj:
-            query = query.join(CommonsEntityTag).filter(CommonsEntityTag.tag_id == tag_obj.id)
-        else:
-            from sqlalchemy import false
-
-            query = query.filter(false())
-
+    # Apply search filter to both queries
     if search:
         search_pattern = f"%{search}%"
-        query = query.filter(
+        canonical_query = canonical_query.filter(Location.name.ilike(search_pattern))
+        commons_query = commons_query.filter(
             or_(
                 CommonsEntity.data["name"].astext.ilike(search_pattern),
                 CommonsEntity.data["description"].astext.ilike(search_pattern),
             )
         )
 
-    total = query.count()
-    entities = query.order_by(desc(CommonsEntity.created_at)).offset(skip).limit(limit).all()
+    # Get canonical locations and convert to entity format
+    canonical_locations = canonical_query.all()
+    canonical_entities = []
+    for loc in canonical_locations:
+        # Convert Location to CommonsEntity-like format
+        canonical_entities.append(
+            {
+                "id": str(loc.id),
+                "entity_type": "location",
+                "canonical_id": str(loc.id),  # Canonical locations are their own canonical_id
+                "data": {
+                    "name": loc.name,
+                    "type": loc.type,
+                    "parent_location_id": loc.parent_location_id,
+                    "metadata": loc.meta,
+                },
+                "version": 1,
+                "is_public": True,
+                "created_by": loc.created_by,
+                "created_at": loc.created_at,
+                "tags": None,  # Canonical locations don't have tags in CommonsEntity
+            }
+        )
 
-    entity_responses = [build_entity_response(entity, db) for entity in entities]
+    # Get CommonsEntity locations
+    if tag:
+        tag_obj = db.query(Tag).filter(Tag.name == tag).first()
+        if tag_obj:
+            commons_query = commons_query.join(CommonsEntityTag).filter(
+                CommonsEntityTag.tag_id == tag_obj.id
+            )
+        else:
+            from sqlalchemy import false
+
+            commons_query = commons_query.filter(false())
+
+    commons_entities = commons_query.all()
+    commons_responses = [build_entity_response(entity, db) for entity in commons_entities]
+
+    # Combine and sort by created_at
+    all_entities = canonical_entities + commons_responses
+    all_entities.sort(key=lambda x: x["created_at"], reverse=True)
+
+    # Apply pagination
+    total = len(all_entities)
+    paginated_entities = all_entities[skip : skip + limit]
 
     result = {
-        "entities": entity_responses,
+        "entities": paginated_entities,
         "total": total,
         "skip": skip,
         "limit": limit,
