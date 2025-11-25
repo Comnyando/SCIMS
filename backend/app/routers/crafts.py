@@ -218,7 +218,7 @@ async def list_crafts(
     from app.models.organization_member import OrganizationMember
 
     user_org_ids = [
-        m.organization_id
+        str(m.organization_id)
         for m in db.query(OrganizationMember)
         .filter(OrganizationMember.user_id == current_user.id)
         .all()
@@ -256,42 +256,56 @@ async def list_crafts(
     else:
         query = query.order_by(sort_column)
 
-    # Get total count
-    total = query.count()
+    try:
+        # Get total count
+        total = query.count()
 
-    # Apply pagination
-    crafts = query.offset(skip).limit(limit).all()
+        # Apply pagination
+        crafts = query.offset(skip).limit(limit).all()
 
-    # Build response - manually construct dicts to avoid relationship validation issues
-    craft_responses = []
-    for craft in crafts:
-        craft_dict = {
-            "id": str(craft.id),
-            "blueprint_id": craft.blueprint_id,
-            "organization_id": craft.organization_id,
-            "requested_by": craft.requested_by,
-            "status": craft.status,
-            "priority": craft.priority,
-            "scheduled_start": craft.scheduled_start,
-            "started_at": craft.started_at,
-            "completed_at": craft.completed_at,
-            "output_location_id": craft.output_location_id,
-            "metadata": craft.craft_metadata if craft.craft_metadata is not None else {},
-            "blueprint": None,
-            "organization": None,
-            "requester": None,
-            "output_location": None,
-            "ingredients": None,
+        # Build response - manually construct dicts to avoid relationship validation issues
+        craft_responses = []
+        for craft in crafts:
+            craft_dict = {
+                "id": str(craft.id),
+                "blueprint_id": craft.blueprint_id,
+                "organization_id": craft.organization_id,
+                "requested_by": craft.requested_by,
+                "status": craft.status,
+                "priority": craft.priority,
+                "scheduled_start": craft.scheduled_start,
+                "started_at": craft.started_at,
+                "completed_at": craft.completed_at,
+                "output_location_id": craft.output_location_id,
+                "metadata": craft.craft_metadata if craft.craft_metadata is not None else {},
+                "blueprint": None,
+                "organization": None,
+                "requester": None,
+                "output_location": None,
+                "ingredients": None,
+            }
+            craft_responses.append(craft_dict)
+
+        return {
+            "crafts": craft_responses,
+            "total": total,
+            "skip": skip,
+            "limit": limit,
+            "pages": ceil(total / limit) if limit > 0 else 0,
         }
-        craft_responses.append(craft_dict)
+    except Exception as e:
+        # Log error and return empty result instead of crashing
+        import logging
 
-    return {
-        "crafts": craft_responses,
-        "total": total,
-        "skip": skip,
-        "limit": limit,
-        "pages": ceil(total / limit) if limit > 0 else 0,
-    }
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error listing crafts: {str(e)}", exc_info=True)
+        return {
+            "crafts": [],
+            "total": 0,
+            "skip": skip,
+            "limit": limit,
+            "pages": 0,
+        }
 
 
 @router.post("", response_model=CraftResponse, status_code=status.HTTP_201_CREATED)

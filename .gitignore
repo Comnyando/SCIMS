@@ -100,3 +100,4 @@ docker-compose.override.yml
 
 # CI/CD build outputs
 frontend/dist/
+backend/celerybeat-schedule

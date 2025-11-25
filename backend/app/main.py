@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.middleware.analytics import AnalyticsMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
 from app.routers import (
     auth,
     items,
@@ -27,8 +28,55 @@ from app.routers import (
 
 app = FastAPI(
     title="SCIMS API",
-    description="Star Citizen Inventory Management System API",
+    description="""
+    Star Citizen Inventory Management System (SCIMS) API
+    
+    A comprehensive REST API for managing inventory, crafting, goals, and resource optimization
+    for Star Citizen organizations.
+    
+    ## Features
+    
+    - **Authentication**: JWT-based authentication with refresh tokens
+    - **Inventory Management**: Track items, locations, and stock levels
+    - **Crafting System**: Blueprints, crafts, and ingredient management
+    - **Goals & Analytics**: Set goals and track progress with privacy-respecting analytics
+    - **Optimization Engine**: Find optimal resource sources and suggest crafts
+    - **Integration Framework**: Webhooks, import/export, and external tool integration
+    - **Public Commons**: Community-shared items, recipes, and locations
+    
+    ## Authentication
+    
+    Most endpoints require authentication. Register a user or login to receive JWT tokens.
+    Include the token in the Authorization header: `Bearer <your-token>`
+    
+    ## Rate Limiting
+    
+    - Default: 60 requests per minute
+    - Public endpoints: 120 requests per minute
+    - Submission endpoints: 10 requests per minute
+    
+    ## API Versioning
+    
+    All endpoints are versioned under `/api/v1/`
+    """,
     version="0.1.0",
+    contact={
+        "name": "SCIMS Project",
+        "url": "https://github.com/your-org/scims",
+    },
+    license_info={
+        "name": "MIT",
+    },
+    servers=[
+        {
+            "url": "http://localhost:8000",
+            "description": "Development server",
+        },
+        {
+            "url": "https://api.scims.example.com",
+            "description": "Production server",
+        },
+    ],
 )
 
 # Configure CORS
@@ -42,6 +90,12 @@ app.add_middleware(
 
 # Add analytics middleware (logs usage events if user has consented)
 app.add_middleware(AnalyticsMiddleware)
+
+# Add security headers middleware
+app.add_middleware(
+    SecurityHeadersMiddleware,
+    hsts_max_age=31536000 if settings.environment == "production" else 0,
+)
 
 # Add rate limiting middleware
 app.add_middleware(

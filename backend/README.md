@@ -143,6 +143,15 @@ When the backend is running, interactive documentation is available:
 - **ReDoc:** http://localhost:8000/redoc
 - **OpenAPI JSON:** http://localhost:8000/openapi.json
 
+The OpenAPI documentation includes:
+- Complete endpoint descriptions
+- Request/response schemas
+- Authentication requirements
+- Example requests and responses
+- Try-it-out functionality
+
+For API usage examples, see [API Usage Examples](../docs/examples/api-usage.md).
+
 ## Database Management
 
 ### Running Migrations

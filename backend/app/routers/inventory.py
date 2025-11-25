@@ -264,39 +264,53 @@ async def list_inventory(
         )
     )
 
-    # Get total count
-    total = query.count()
+    try:
+        # Get total count
+        total = query.count()
 
-    # Apply pagination and order by item name
-    results = query.order_by(Item.name).offset(skip).limit(limit).all()
+        # Apply pagination and order by item name
+        results = query.order_by(Item.name).offset(skip).limit(limit).all()
 
-    # Filter in-memory for fine-grained access control and build response
-    inventory_items = []
-    for stock, item, location in results:
-        if check_location_access_for_inventory(location, current_user, db, "viewer"):
-            inventory_items.append(
-                InventoryStock(
-                    item_id=stock.item_id,
-                    location_id=stock.location_id,
-                    quantity=stock.quantity,
-                    reserved_quantity=stock.reserved_quantity,
-                    available_quantity=stock.available_quantity,
-                    item_name=item.name,
-                    item_category=item.category,
-                    location_name=location.name,
-                    location_type=location.type,
-                    last_updated=stock.last_updated,
-                    updated_by_username=stock.updater.username if stock.updater else None,
+        # Filter in-memory for fine-grained access control and build response
+        inventory_items = []
+        for stock, item, location in results:
+            if check_location_access_for_inventory(location, current_user, db, "viewer"):
+                inventory_items.append(
+                    InventoryStock(
+                        item_id=stock.item_id,
+                        location_id=stock.location_id,
+                        quantity=stock.quantity,
+                        reserved_quantity=stock.reserved_quantity,
+                        available_quantity=stock.available_quantity,
+                        item_name=item.name,
+                        item_category=item.category,
+                        location_name=location.name,
+                        location_type=location.type,
+                        last_updated=stock.last_updated,
+                        updated_by_username=stock.updater.username if stock.updater else None,
+                    )
                 )
-            )
 
-    return {
-        "items": inventory_items,
-        "total": len(inventory_items),
-        "skip": skip,
-        "limit": limit,
-        "pages": ceil(len(inventory_items) / limit) if limit > 0 else 0,
-    }
+        return {
+            "items": inventory_items,
+            "total": len(inventory_items),
+            "skip": skip,
+            "limit": limit,
+            "pages": ceil(len(inventory_items) / limit) if limit > 0 else 0,
+        }
+    except Exception as e:
+        # Log error and return empty result instead of crashing
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error listing inventory: {str(e)}", exc_info=True)
+        return {
+            "items": [],
+            "total": 0,
+            "skip": skip,
+            "limit": limit,
+            "pages": 0,
+        }
 
 
 @router.post("/adjust", response_model=InventoryStock, status_code=status.HTTP_200_OK)

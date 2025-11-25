@@ -312,6 +312,51 @@ Tags are used to categorize and filter commons entities. All tags are publicly v
 4. **Merge Duplicates**: Merge duplicates rather than rejecting
 5. **Document Decisions**: Leave clear notes explaining your actions
 
+## Takedown Procedures
+
+### Requesting a Takedown
+
+If you believe content in the Public Commons violates copyright, contains incorrect information, or should be removed for other reasons:
+
+1. **Contact Administrators**: Reach out to system administrators with:
+   - Entity ID or URL
+   - Reason for takedown request
+   - Your relationship to the content (original creator, copyright holder, etc.)
+
+2. **Moderator Review**: Administrators will review the request and may:
+   - Unpublish the entity (set `is_public` to `false`)
+   - Delete the entity (if it violates terms)
+   - Request more information
+
+### Unpublishing Entities (Moderators)
+
+Moderators can unpublish entities without deleting them:
+
+```bash
+# Unpublish an entity (via admin interface or direct database update)
+# This removes it from public access but preserves the data
+```
+
+**When to Unpublish:**
+- Copyright violations
+- Incorrect or outdated information
+- User requests (with verification)
+- Policy violations
+
+**When to Delete:**
+- Spam or malicious content
+- Repeated violations
+- Legal requirements
+
+### Entity Versioning
+
+When an entity needs correction:
+- **Option 1**: Unpublish the old version and approve a new submission
+- **Option 2**: Create a new version that supersedes the old one
+- **Option 3**: Merge corrections into the existing entity (for minor updates)
+
+Entities maintain version history, so previous versions remain accessible for reference.
+
 ## Troubleshooting
 
 ### Submission Not Appearing
