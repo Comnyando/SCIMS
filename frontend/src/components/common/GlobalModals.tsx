@@ -8,9 +8,16 @@
  */
 
 import { LocationModal } from "../locations/modal";
+import { ItemModal } from "../items/modal";
+import { BlueprintModal } from "../blueprints/modal";
+import { CraftModal } from "../crafts/modal";
+import { InventoryModal } from "../inventory/modal";
 import { AlertDialog } from "./AlertDialog";
 import { useLocationModalStore } from "../../stores/locationModalStore";
-import { useAlertStore } from "../../stores/alertStore";
+import { useItemModalStore } from "../../stores/itemModalStore";
+import { useBlueprintModalStore } from "../../stores/blueprintModalStore";
+import { useCraftModalStore } from "../../stores/craftModalStore";
+import { useInventoryModalStore } from "../../stores/inventoryModalStore";
 
 /**
  * GlobalModals component that renders all global modals.
@@ -19,13 +26,19 @@ import { useAlertStore } from "../../stores/alertStore";
 export function GlobalModals() {
   // Get modal visibility from stores
   const isLocationModalOpen = useLocationModalStore((state) => state.isOpen);
-  const isAlertOpen = useAlertStore((state) => state.alert.isOpen);
+  const isItemModalOpen = useItemModalStore((state) => state.isOpen);
+  const isBlueprintModalOpen = useBlueprintModalStore((state) => state.isOpen);
+  const isCraftModalOpen = useCraftModalStore((state) => state.isOpen);
+  const isInventoryModalOpen = useInventoryModalStore((state) => state.isOpen);
 
   return (
     <>
       {isLocationModalOpen && <LocationModal />}
-      {isAlertOpen && <AlertDialog />}
-      {/* Add other global modals here as they are created */}
+      {isItemModalOpen && <ItemModal />}
+      {isBlueprintModalOpen && <BlueprintModal />}
+      {isCraftModalOpen && <CraftModal />}
+      {isInventoryModalOpen && <InventoryModal />}
+      <AlertDialog />
     </>
   );
 }

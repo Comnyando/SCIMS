@@ -28,7 +28,14 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   return (
     <div style={tableContainer}>
-      <HTMLTable striped interactive style={{ width: "100%" }}>
+      <HTMLTable
+        striped
+        interactive
+        style={{
+          width: "100%",
+          backgroundColor: "var(--scims-background-primary)",
+        }}
+      >
         <thead>
           <tr>
             {columns.map((column) => (
@@ -37,8 +44,8 @@ export default function DataTable<T>({
                 style={{
                   padding: spacing.md,
                   textAlign: column.align || "left",
-                  borderBottom: `2px solid ${colors.border.medium}`,
-                  backgroundColor: colors.background.tertiary,
+                  borderBottom: `2px solid var(--scims-table-border)`,
+                  backgroundColor: "var(--scims-table-header-bg)",
                 }}
               >
                 {column.label}
@@ -69,12 +76,14 @@ export default function DataTable<T>({
                     style={{
                       padding: spacing.md,
                       textAlign: column.align || "left",
-                      borderBottom: `1px solid ${colors.border.light}`,
+                      borderBottom: `1px solid var(--scims-table-border)`,
                     }}
                   >
                     {column.render
                       ? column.render(item)
-                      : String((item as Record<string, unknown>)[column.key] ?? "-")}
+                      : String(
+                          (item as Record<string, unknown>)[column.key] ?? "-"
+                        )}
                   </td>
                 ))}
               </tr>
@@ -85,4 +94,3 @@ export default function DataTable<T>({
     </div>
   );
 }
-

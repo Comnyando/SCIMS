@@ -175,7 +175,7 @@ export default function BlueprintDetailPage() {
                 style={{
                   padding: spacing.sm,
                   marginBottom: spacing.xs,
-                  backgroundColor: colors.background.tertiary,
+                  backgroundColor: "var(--scims-background-tertiary)",
                   borderRadius: "4px",
                   display: "flex",
                   justifyContent: "space-between",

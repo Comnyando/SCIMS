@@ -35,26 +35,39 @@ export const typography = {
   },
 } as const;
 
+/**
+ * Theme-aware color utilities that adapt to dark mode.
+ * Uses custom CSS variables defined in theme-variables.css.
+ */
 export const colors = {
+  // Text colors - use CSS variables that adapt to dark mode
   text: {
-    primary: "#293742",
-    secondary: "#5C7080",
-    muted: "#8A9BA8",
-    inverse: "#F5F8FA",
+    primary: "var(--scims-text-primary)",
+    secondary: "var(--scims-text-secondary)",
+    muted: "var(--scims-text-muted)",
+    inverse: "var(--scims-text-inverse)",
   },
+  // Background colors - use CSS variables
   background: {
-    primary: "#FFFFFF",
-    secondary: "#F5F8FA",
-    tertiary: "#EBF1F5",
+    primary: "var(--scims-background-primary)",
+    secondary: "var(--scims-background-secondary)",
+    tertiary: "var(--scims-background-tertiary)",
   },
+  // Border colors
   border: {
-    light: "#E1E8ED",
-    medium: "#CED9E0",
-    dark: "#8A9BA8",
+    light: "var(--scims-border-light)",
+    medium: "var(--scims-border-medium)",
+    dark: "var(--scims-border-dark)",
   },
+  // Intent colors (these are consistent across themes)
   success: "#0F9960",
   warning: "#D9822B",
   danger: "#DB3737",
+  // Additional theme-aware colors
+  code: {
+    background: "var(--scims-code-background)",
+    text: "var(--scims-text-primary)",
+  },
 } as const;
 
 export const borderRadius = {

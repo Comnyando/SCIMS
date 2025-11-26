@@ -28,6 +28,8 @@ from app.schemas.auth import (
     RegisterRequest,
     LoginRequest,
     RefreshTokenRequest,
+    ChangePasswordRequest,
+    DeleteAccountRequest,
     LoginResponse,
     RegisterResponse,
 )
@@ -117,6 +119,8 @@ __all__ = [
     "RegisterRequest",
     "LoginRequest",
     "RefreshTokenRequest",
+    "ChangePasswordRequest",
+    "DeleteAccountRequest",
     "LoginResponse",
     "RegisterResponse",
     # Item schemas

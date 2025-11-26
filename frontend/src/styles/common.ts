@@ -2,7 +2,7 @@
  * Common CSS-in-JS styles and utilities.
  */
 
-import { spacing, typography, colors, borderRadius, shadows } from "./theme";
+import { spacing, typography, borderRadius, shadows } from "./theme";
 
 /**
  * Common page container styles for auth pages (login, register)
@@ -13,7 +13,7 @@ export const authPageContainer = {
   alignItems: "center",
   justifyContent: "center",
   padding: spacing.xl,
-  backgroundColor: colors.background.secondary,
+  backgroundColor: "var(--scims-background-secondary)",
 } as const;
 
 /**
@@ -59,7 +59,7 @@ export const filterRow = {
  * Common table container styles
  */
 export const tableContainer = {
-  backgroundColor: colors.background.primary,
+  backgroundColor: "var(--scims-background-primary)",
   borderRadius: borderRadius.lg,
   overflow: "hidden" as const,
   boxShadow: shadows.md,
@@ -79,11 +79,10 @@ export const paginationContainer = {
  * Common text styles
  */
 export const textMuted = {
-  color: colors.text.secondary,
+  color: "var(--scims-text-secondary)",
 } as const;
 
 export const textSecondary = {
-  color: colors.text.muted,
+  color: "var(--scims-text-muted)",
   fontSize: typography.fontSize.sm,
 } as const;
-

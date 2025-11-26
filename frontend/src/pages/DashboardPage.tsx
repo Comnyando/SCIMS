@@ -8,7 +8,13 @@ import TourButton from "../components/onboarding/TourButton";
 import { useItems } from "../hooks/queries/items";
 import { useLocations } from "../hooks/queries/locations";
 import { useInventory } from "../hooks/queries/inventory";
-import { spacing, colors, typography, shadows, borderRadius } from "../styles/theme";
+import {
+  spacing,
+  colors,
+  typography,
+  shadows,
+  borderRadius,
+} from "../styles/theme";
 
 export default function DashboardPage() {
   const { data: itemsData } = useItems({ skip: 0, limit: 5 });
@@ -38,7 +44,14 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.lg }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: spacing.lg,
+        }}
+      >
         <H1 style={{ margin: 0 }}>Dashboard</H1>
         <TourButton tourName="dashboard-tour" text="Take Tour" />
       </div>
@@ -57,12 +70,18 @@ export default function DashboardPage() {
           <Card
             key={card.title}
             style={{
-              backgroundColor: colors.background.primary,
+              backgroundColor: "var(--scims-background-primary)",
               borderRadius: borderRadius.lg,
               boxShadow: shadows.md,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", marginBottom: spacing.md }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: spacing.md,
+              }}
+            >
               <H3 style={{ margin: 0, flex: 1 }}>{card.title}</H3>
             </div>
             <p
@@ -75,11 +94,12 @@ export default function DashboardPage() {
             >
               {card.value}
             </p>
-            <p style={{ color: colors.text.secondary, margin: 0 }}>{card.description}</p>
+            <p style={{ color: colors.text.secondary, margin: 0 }}>
+              {card.description}
+            </p>
           </Card>
         ))}
       </div>
     </DashboardLayout>
   );
 }
-

@@ -205,7 +205,8 @@ export default function SubmissionDetailPage() {
             style={{
               marginTop: spacing.sm,
               padding: spacing.md,
-              backgroundColor: "#f5f5f5",
+              backgroundColor: "var(--scims-code-background)",
+              color: "var(--scims-text-primary)",
               borderRadius: "4px",
               overflow: "auto",
               maxHeight: "400px",
@@ -295,7 +296,7 @@ export default function SubmissionDetailPage() {
                   padding: spacing.sm,
                   marginTop: spacing.sm,
                   borderRadius: "4px",
-                  border: "1px solid #ccc",
+                  border: "1px solid var(--scims-border-light)",
                 }}
                 placeholder="Enter UUID of entity to merge into"
               />

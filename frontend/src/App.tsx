@@ -37,6 +37,7 @@ import PublicEntitiesPage from "./pages/PublicEntitiesPage";
 import PublicEntityDetailPage from "./pages/PublicEntityDetailPage";
 import TagManagerPage from "./pages/TagManagerPage";
 import DuplicateFinderPage from "./pages/DuplicateFinderPage";
+import AccountManagementPage from "./pages/AccountManagementPage";
 
 function App() {
   return (
@@ -183,10 +184,18 @@ function App() {
             }
           />
           <Route
-            path="/analytics"
+            path="/analytics/dashboard"
             element={
               <ProtectedRoute>
                 <AnalyticsDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountManagementPage />
               </ProtectedRoute>
             }
           />

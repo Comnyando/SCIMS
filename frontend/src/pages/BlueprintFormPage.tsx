@@ -28,7 +28,7 @@ import {
 } from "../hooks/queries/blueprints";
 import { useItems } from "../hooks/queries/items";
 import { pageHeader } from "../styles/common";
-import { spacing, colors } from "../styles/theme";
+import { spacing } from "../styles/theme";
 import type {
   BlueprintIngredient,
   BlueprintCreate,
@@ -279,7 +279,9 @@ export default function BlueprintFormPage() {
               {ingredients.map((ingredient, index) => (
                 <Card
                   key={index}
-                  style={{ backgroundColor: colors.background.tertiary }}
+                  style={{
+                    backgroundColor: "var(--scims-background-tertiary)",
+                  }}
                 >
                   <div
                     style={{

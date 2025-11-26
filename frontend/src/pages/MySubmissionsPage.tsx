@@ -138,7 +138,12 @@ export default function MySubmissionsPage() {
       label: "Notes",
       render: (submission: CommonsSubmissionResponse) =>
         submission.review_notes ? (
-          <span style={{ fontStyle: "italic", color: "#666" }}>
+          <span
+            style={{
+              fontStyle: "italic",
+              color: "var(--scims-text-muted)",
+            }}
+          >
             {submission.review_notes.length > 50
               ? `${submission.review_notes.substring(0, 50)}...`
               : submission.review_notes}

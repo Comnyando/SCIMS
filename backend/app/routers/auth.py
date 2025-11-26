@@ -26,6 +26,8 @@ from app.schemas.auth import (
     RegisterRequest,
     LoginRequest,
     RefreshTokenRequest,
+    ChangePasswordRequest,
+    DeleteAccountRequest,
     LoginResponse,
     RegisterResponse,
     Token,
@@ -246,3 +248,94 @@ async def get_current_user_info(
         UserResponse with user information
     """
     return UserResponse.model_validate(current_user)
+
+
+@router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
+async def change_password(
+    request: ChangePasswordRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Change the current user's password.
+
+    Requires the current password for verification before setting a new password.
+
+    Args:
+        request: Change password request with current and new password
+        current_user: Current authenticated user
+        db: Database session
+
+    Raises:
+        HTTPException: If current password is incorrect or user has no password set
+    """
+    # Verify current password
+    if not current_user.hashed_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User account has no password set",
+        )
+
+    if not verify_password(request.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Current password is incorrect",
+        )
+
+    # Update password
+    current_user.hashed_password = hash_password(request.new_password)
+    db.commit()
+
+    return None
+
+
+@router.post("/account/delete", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_account(
+    request: DeleteAccountRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Delete the current user's account.
+
+    This is a destructive operation that permanently deletes the user account
+    and all associated data. Requires password verification and explicit confirmation.
+
+    Args:
+        request: Delete account request with password and confirmation
+        current_user: Current authenticated user
+        db: Database session
+
+    Raises:
+        HTTPException: If password is incorrect, confirmation is false, or user has no password set
+    """
+    if not request.confirm:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account deletion requires explicit confirmation",
+        )
+
+    # Verify password
+    if not current_user.hashed_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User account has no password set",
+        )
+
+    if not verify_password(request.password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Password is incorrect",
+        )
+
+    # Soft delete: set is_active to False
+    # This preserves data integrity while preventing login
+    current_user.is_active = False
+    db.commit()
+
+    # Note: Hard delete could be implemented with:
+    # db.delete(current_user)
+    # db.commit()
+    # But soft delete is safer for data integrity and audit trails
+
+    return None

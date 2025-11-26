@@ -154,7 +154,7 @@ export default function CraftFormPage() {
             <Card
               style={{
                 marginTop: spacing.md,
-                backgroundColor: colors.background.secondary,
+                backgroundColor: "var(--scims-background-secondary)",
               }}
               data-tour="blueprint-preview"
             >

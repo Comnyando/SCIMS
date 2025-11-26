@@ -118,7 +118,8 @@ export default function PublicEntityDetailPage() {
             style={{
               marginTop: spacing.sm,
               padding: spacing.md,
-              backgroundColor: "#f5f5f5",
+              backgroundColor: "var(--scims-code-background)",
+              color: "var(--scims-text-primary)",
               borderRadius: "4px",
               overflow: "auto",
               maxHeight: "600px",

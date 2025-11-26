@@ -3,9 +3,17 @@
  */
 
 import { useState } from "react";
-import { InputGroup, H1, Callout, Intent, Spinner } from "@blueprintjs/core";
+import {
+  InputGroup,
+  H1,
+  Callout,
+  Intent,
+  Spinner,
+  Button,
+} from "@blueprintjs/core";
 import DashboardLayout from "../components/DashboardLayout";
 import { useItems } from "../hooks/queries/items";
+import { useItemModalStore } from "../stores/itemModalStore";
 import DataTable from "../components/common/DataTable";
 import Pagination from "../components/common/Pagination";
 import { pageHeader, filterRow, sectionSpacing } from "../styles/common";
@@ -13,6 +21,10 @@ import { spacing, colors } from "../styles/theme";
 import type { Item } from "../types";
 
 export default function ItemsPage() {
+  const openCreateModal = useItemModalStore((state) => state.openCreateModal);
+  const openViewModal = useItemModalStore((state) => state.openViewModal);
+  const openEditModal = useItemModalStore((state) => state.openEditModal);
+
   const [skip, setSkip] = useState(0);
   const [limit] = useState(50);
   const [search, setSearch] = useState("");
@@ -35,11 +47,27 @@ export default function ItemsPage() {
     setSkip(0);
   };
 
+  const handleItemClick = (item: Item) => {
+    openViewModal(item);
+  };
+
+  const handleEditClick = (e: React.MouseEvent, item: Item) => {
+    e.stopPropagation();
+    openEditModal(item);
+  };
+
   const columns = [
     {
       key: "name",
       label: "Name",
-      render: (item: Item) => <strong>{item.name}</strong>,
+      render: (item: Item) => (
+        <strong
+          style={{ cursor: "pointer" }}
+          onClick={() => handleItemClick(item)}
+        >
+          {item.name}
+        </strong>
+      ),
     },
     {
       key: "category",
@@ -55,7 +83,31 @@ export default function ItemsPage() {
       key: "description",
       label: "Description",
       render: (item: Item) => (
-        <span style={{ color: colors.text.secondary }}>{item.description || "-"}</span>
+        <span style={{ color: colors.text.secondary }}>
+          {item.description || "-"}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (item: Item) => (
+        <div style={{ display: "flex", gap: spacing.xs }}>
+          <Button
+            small
+            icon="eye-open"
+            text="View"
+            onClick={() => handleItemClick(item)}
+            intent={Intent.PRIMARY}
+          />
+          <Button
+            small
+            icon="edit"
+            text="Edit"
+            onClick={(e) => handleEditClick(e, item)}
+            intent={Intent.PRIMARY}
+          />
+        </div>
       ),
     },
   ];
@@ -65,7 +117,22 @@ export default function ItemsPage() {
 
   return (
     <DashboardLayout>
-      <H1 style={pageHeader}>Items</H1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: spacing.lg,
+        }}
+      >
+        <H1 style={pageHeader}>Items</H1>
+        <Button
+          icon="plus"
+          text="Create Item"
+          intent="primary"
+          onClick={() => openCreateModal()}
+        />
+      </div>
 
       <div style={filterRow}>
         <InputGroup
@@ -124,4 +191,3 @@ export default function ItemsPage() {
     </DashboardLayout>
   );
 }
-
