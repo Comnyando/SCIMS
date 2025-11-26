@@ -174,7 +174,7 @@ export default function AnalyticsDashboardPage() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: spacing.sm,
-                      backgroundColor: colors.background.secondary,
+                      backgroundColor: "var(--scims-background-secondary)",
                       borderRadius: "4px",
                     }}
                   >
@@ -207,7 +207,7 @@ export default function AnalyticsDashboardPage() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: spacing.sm,
-                      backgroundColor: colors.background.secondary,
+                      backgroundColor: "var(--scims-background-secondary)",
                       borderRadius: "4px",
                     }}
                   >

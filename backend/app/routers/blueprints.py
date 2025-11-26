@@ -128,6 +128,7 @@ async def list_blueprints(
     query = db.query(Blueprint)
 
     # Apply access control: only public blueprints or user's own blueprints
+    # This must be applied first to ensure users can see their own blueprints
     query = query.filter(
         or_(
             Blueprint.is_public == True,  # Public blueprints
@@ -150,8 +151,22 @@ async def list_blueprints(
         query = query.filter(Blueprint.category == category)
     if output_item_id:
         query = query.filter(Blueprint.output_item_id == output_item_id)
+    # IMPORTANT: When filtering by is_public, we need to ensure users can still see their own blueprints
+    # So if filtering for public only (is_public=True), show public blueprints
+    # If filtering for private only (is_public=False), show user's own private blueprints
+    # If not filtering (is_public=None), show both public and user's own (already handled by access control)
     if is_public is not None:
-        query = query.filter(Blueprint.is_public == is_public)
+        if is_public:
+            # Filter for public blueprints only (access control already ensures user can see these)
+            query = query.filter(Blueprint.is_public == True)  # noqa: E712
+        else:
+            # Filter for private blueprints, but only user's own
+            query = query.filter(
+                and_(
+                    Blueprint.is_public == False,  # noqa: E712
+                    Blueprint.created_by == current_user.id,  # Only user's own private blueprints
+                )
+            )
     if created_by:
         query = query.filter(Blueprint.created_by == created_by)
 

@@ -34,13 +34,16 @@ export interface LocationModalFormState {
 interface LocationModalStore extends LocationModalFormState {
   // Modal state
   isOpen: boolean;
+  mode: "view" | "edit" | "create";
   location: Location | null;
   isSubmitting: boolean;
   error: string | null;
 
   // Actions
   openCreateModal: (organizationId?: string | null) => void;
+  openViewModal: (location: Location) => void;
   openEditModal: (location: Location) => void;
+  switchToEditMode: () => void;
   closeModal: () => void;
   resetForm: () => void;
   initializeFromLocation: (location: Location) => void;
@@ -102,6 +105,7 @@ export const useLocationModalStore = create<LocationModalStore>((set, get) => ({
   // Initial state
   ...initialFormState,
   isOpen: false,
+  mode: "create",
   location: null,
   isSubmitting: false,
   error: null,
@@ -109,16 +113,31 @@ export const useLocationModalStore = create<LocationModalStore>((set, get) => ({
   // Modal actions
   openCreateModal: (organizationId) => {
     get().initializeForNew(organizationId);
-    set({ isOpen: true, error: null });
+    set({ isOpen: true, mode: "create", error: null });
+  },
+
+  openViewModal: (location) => {
+    get().initializeFromLocation(location);
+    set({ isOpen: true, mode: "view", location, error: null });
   },
 
   openEditModal: (location) => {
     get().initializeFromLocation(location);
-    set({ isOpen: true, error: null });
+    set({ isOpen: true, mode: "edit", location, error: null });
+  },
+
+  switchToEditMode: () => {
+    set({ mode: "edit" });
   },
 
   closeModal: () => {
-    set({ isOpen: false, location: null, error: null, isSubmitting: false });
+    set({
+      isOpen: false,
+      mode: "create",
+      location: null,
+      error: null,
+      isSubmitting: false,
+    });
     get().resetForm();
   },
 

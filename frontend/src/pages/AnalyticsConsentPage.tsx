@@ -64,7 +64,12 @@ export default function AnalyticsConsentPage() {
           <h2 style={{ marginBottom: spacing.sm }}>
             Usage Analytics & Data Collection
           </h2>
-          <p style={{ color: "#666", marginBottom: spacing.md }}>
+          <p
+            style={{
+              color: "var(--scims-text-secondary)",
+              marginBottom: spacing.md,
+            }}
+          >
             Help us improve SCIMS by sharing anonymous usage data. This data
             helps us understand how features are used and prioritize
             improvements.
@@ -87,7 +92,7 @@ export default function AnalyticsConsentPage() {
               <p
                 style={{
                   fontSize: "0.9em",
-                  color: "#666",
+                  color: "var(--scims-text-secondary)",
                   marginTop: spacing.xs,
                 }}
               >
@@ -124,7 +129,12 @@ export default function AnalyticsConsentPage() {
 
         <div style={{ marginTop: spacing.md }}>
           <h3 style={{ marginBottom: spacing.sm }}>What We Collect</h3>
-          <ul style={{ paddingLeft: spacing.lg, color: "#666" }}>
+          <ul
+            style={{
+              paddingLeft: spacing.lg,
+              color: "var(--scims-text-secondary)",
+            }}
+          >
             <li>Actions you take (crafts created, goals set, etc.)</li>
             <li>Features you use most frequently</li>
             <li>
@@ -135,7 +145,12 @@ export default function AnalyticsConsentPage() {
           <h3 style={{ marginTop: spacing.md, marginBottom: spacing.sm }}>
             Privacy & Security
           </h3>
-          <ul style={{ paddingLeft: spacing.lg, color: "#666" }}>
+          <ul
+            style={{
+              paddingLeft: spacing.lg,
+              color: "var(--scims-text-secondary)",
+            }}
+          >
             <li>IP addresses are anonymized before storage</li>
             <li>User agent strings are truncated</li>
             <li>No personal information is collected</li>
@@ -146,7 +161,12 @@ export default function AnalyticsConsentPage() {
           <h3 style={{ marginTop: spacing.md, marginBottom: spacing.sm }}>
             How We Use This Data
           </h3>
-          <ul style={{ paddingLeft: spacing.lg, color: "#666" }}>
+          <ul
+            style={{
+              paddingLeft: spacing.lg,
+              color: "var(--scims-text-secondary)",
+            }}
+          >
             <li>Improve feature prioritization</li>
             <li>Understand usage patterns</li>
             <li>Identify popular blueprints and goals</li>

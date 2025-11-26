@@ -1,0 +1,283 @@
+/**
+ * Theme-aware CSS variables that adapt to dark mode.
+ * These variables change based on the .bp6-dark class applied to the body.
+ */
+
+:root {
+  /* Light theme colors */
+  --scims-background-primary: #ffffff;
+  --scims-background-secondary: #f5f8fa;
+  --scims-background-tertiary: #ebf1f5;
+  --scims-text-primary: #293742;
+  --scims-text-secondary: #5c7080;
+  --scims-text-muted: #8a9ba8;
+  --scims-text-inverse: #f5f8fa;
+  --scims-border-light: #e1e8ed;
+  --scims-border-medium: #ced9e0;
+  --scims-border-dark: #8a9ba8;
+  --scims-code-background: #f5f8fa;
+  --scims-table-header-bg: #ebf1f5;
+  --scims-table-border: #ced9e0;
+}
+
+.bp6-dark,
+.bp3-dark {
+  /* Dark theme colors */
+  --scims-background-primary: #30404d;
+  --scims-background-secondary: #202b33;
+  --scims-background-tertiary: #1c2127;
+  --scims-text-primary: #f5f8fa;
+  --scims-text-secondary: #bfccd6;
+  --scims-text-muted: #738694;
+  --scims-text-inverse: #293742;
+  --scims-border-light: #394b59;
+  --scims-border-medium: #30404d;
+  --scims-border-dark: #738694;
+  --scims-code-background: #202b33;
+  --scims-table-header-bg: #1c2127;
+  --scims-table-border: #394b59;
+}
+
+/* Override Blueprint.js component backgrounds to use our theme variables */
+.bp6-card,
+.bp3-card {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-card,
+.bp6-dark .bp3-card,
+.bp3-dark .bp6-card,
+.bp3-dark .bp3-card {
+  background-color: var(--scims-background-primary) !important;
+}
+
+/* Ensure HTMLTable backgrounds use theme variables */
+.bp6-html-table,
+.bp3-html-table {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-html-table thead th,
+.bp3-html-table thead th {
+  background-color: var(--scims-table-header-bg) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-html-table tbody td,
+.bp3-html-table tbody td {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-html-table tbody tr.bp6-interactive:hover td,
+.bp6-html-table tbody tr.bp3-interactive:hover td,
+.bp3-html-table tbody tr.bp6-interactive:hover td,
+.bp3-html-table tbody tr.bp3-interactive:hover td {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+.bp6-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp6-html-table.bp3-striped tbody tr:nth-child(odd) td,
+.bp3-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp3-html-table.bp3-striped tbody tr:nth-child(odd) td {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp6-html-table.bp3-striped tbody tr:nth-child(even) td,
+.bp3-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp3-html-table.bp3-striped tbody tr:nth-child(even) td {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+.bp6-dark .bp6-html-table,
+.bp6-dark .bp3-html-table,
+.bp3-dark .bp6-html-table,
+.bp3-dark .bp3-html-table {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-html-table thead th,
+.bp6-dark .bp3-html-table thead th,
+.bp3-dark .bp6-html-table thead th,
+.bp3-dark .bp3-html-table thead th {
+  background-color: var(--scims-table-header-bg) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-dark .bp6-html-table tbody td,
+.bp6-dark .bp3-html-table tbody td,
+.bp3-dark .bp6-html-table tbody td,
+.bp3-dark .bp3-html-table tbody td {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-dark .bp6-html-table tbody tr.bp6-interactive:hover td,
+.bp6-dark .bp6-html-table tbody tr.bp3-interactive:hover td,
+.bp6-dark .bp3-html-table tbody tr.bp6-interactive:hover td,
+.bp6-dark .bp3-html-table tbody tr.bp3-interactive:hover td,
+.bp3-dark .bp6-html-table tbody tr.bp6-interactive:hover td,
+.bp3-dark .bp6-html-table tbody tr.bp3-interactive:hover td,
+.bp3-dark .bp3-html-table tbody tr.bp6-interactive:hover td,
+.bp3-dark .bp3-html-table tbody tr.bp3-interactive:hover td {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+.bp6-dark .bp6-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp6-dark .bp6-html-table.bp3-striped tbody tr:nth-child(odd) td,
+.bp6-dark .bp3-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp6-dark .bp3-html-table.bp3-striped tbody tr:nth-child(odd) td,
+.bp3-dark .bp6-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp3-dark .bp6-html-table.bp3-striped tbody tr:nth-child(odd) td,
+.bp3-dark .bp3-html-table.bp6-striped tbody tr:nth-child(odd) td,
+.bp3-dark .bp3-html-table.bp3-striped tbody tr:nth-child(odd) td {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp6-dark .bp6-html-table.bp3-striped tbody tr:nth-child(even) td,
+.bp6-dark .bp3-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp6-dark .bp3-html-table.bp3-striped tbody tr:nth-child(even) td,
+.bp3-dark .bp6-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp3-dark .bp6-html-table.bp3-striped tbody tr:nth-child(even) td,
+.bp3-dark .bp3-html-table.bp6-striped tbody tr:nth-child(even) td,
+.bp3-dark .bp3-html-table.bp3-striped tbody tr:nth-child(even) td {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+/* Override Callout backgrounds */
+.bp6-callout,
+.bp3-callout {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+.bp6-dark .bp6-callout,
+.bp6-dark .bp3-callout,
+.bp3-dark .bp6-callout,
+.bp3-dark .bp3-callout {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+/* Override Dialog/Modal backgrounds */
+.bp6-dialog,
+.bp3-dialog {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-dialog,
+.bp6-dark .bp3-dialog,
+.bp3-dark .bp6-dialog,
+.bp3-dark .bp3-dialog {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-overlay-backdrop,
+.bp3-overlay-backdrop {
+  background-color: rgba(16, 22, 26, 0.7) !important;
+}
+
+.bp6-dark .bp6-overlay-backdrop,
+.bp6-dark .bp3-overlay-backdrop,
+.bp3-dark .bp6-overlay-backdrop,
+.bp3-dark .bp3-overlay-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Override InputGroup and form elements */
+.bp6-input-group .bp6-input,
+.bp6-input-group .bp3-input,
+.bp3-input-group .bp6-input,
+.bp3-input-group .bp3-input {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-dark .bp6-input-group .bp6-input,
+.bp6-dark .bp6-input-group .bp3-input,
+.bp6-dark .bp3-input-group .bp6-input,
+.bp6-dark .bp3-input-group .bp3-input,
+.bp3-dark .bp6-input-group .bp6-input,
+.bp3-dark .bp6-input-group .bp3-input,
+.bp3-dark .bp3-input-group .bp6-input,
+.bp3-dark .bp3-input-group .bp3-input {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-text-area,
+.bp3-text-area {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-dark .bp6-text-area,
+.bp6-dark .bp3-text-area,
+.bp3-dark .bp6-text-area,
+.bp3-dark .bp3-text-area {
+  background-color: var(--scims-background-primary) !important;
+  color: var(--scims-text-primary) !important;
+}
+
+/* Override Navbar and Menu backgrounds */
+.bp6-navbar,
+.bp3-navbar {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-navbar,
+.bp6-dark .bp3-navbar,
+.bp3-dark .bp6-navbar,
+.bp3-dark .bp3-navbar {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-menu,
+.bp3-menu {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-menu,
+.bp6-dark .bp3-menu,
+.bp3-dark .bp6-menu,
+.bp3-dark .bp3-menu {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-menu-item,
+.bp3-menu-item {
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-dark .bp6-menu-item,
+.bp6-dark .bp3-menu-item,
+.bp3-dark .bp6-menu-item,
+.bp3-dark .bp3-menu-item {
+  color: var(--scims-text-primary) !important;
+}
+
+.bp6-menu-item:hover,
+.bp3-menu-item:hover {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+.bp6-dark .bp6-menu-item:hover,
+.bp6-dark .bp3-menu-item:hover,
+.bp3-dark .bp6-menu-item:hover,
+.bp3-dark .bp3-menu-item:hover {
+  background-color: var(--scims-background-secondary) !important;
+}
+
+/* Override Popover backgrounds */
+.bp6-popover .bp6-popover-content,
+.bp3-popover .bp3-popover-content {
+  background-color: var(--scims-background-primary) !important;
+}
+
+.bp6-dark .bp6-popover .bp6-popover-content,
+.bp6-dark .bp3-popover .bp3-popover-content,
+.bp3-dark .bp6-popover .bp6-popover-content,
+.bp3-dark .bp3-popover .bp3-popover-content {
+  background-color: var(--scims-background-primary) !important;
+}
+

@@ -338,7 +338,7 @@ export default function CraftDetailPage() {
                 gap: spacing.md,
                 marginBottom: spacing.md,
                 padding: spacing.sm,
-                backgroundColor: colors.background.secondary,
+                backgroundColor: "var(--scims-background-secondary)",
                 borderRadius: "4px",
               }}
             >
@@ -372,7 +372,7 @@ export default function CraftDetailPage() {
                 style={{
                   padding: spacing.sm,
                   marginBottom: spacing.xs,
-                  backgroundColor: colors.background.tertiary,
+                  backgroundColor: "var(--scims-background-tertiary)",
                   borderRadius: "4px",
                   display: "flex",
                   justifyContent: "space-between",

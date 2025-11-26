@@ -4,16 +4,11 @@
  * Allows selecting a parent location for a location.
  * For canonical locations, only shows canonical parent locations.
  * For regular locations, shows user's accessible locations.
+ * Uses EasySelect for a better UX.
  */
 
-import {
-  FormGroup,
-  InputGroup,
-  HTMLSelect,
-  Callout,
-  Intent,
-} from "@blueprintjs/core";
-import { spacing } from "../../../styles/theme";
+import { useMemo } from "react";
+import { EasySelect, type EasySelectOption } from "../../common/EasySelect";
 
 interface ParentLocation {
   id: string;
@@ -25,105 +20,54 @@ interface ParentLocationSelectorProps {
   label?: string;
   helperText?: string;
   value: string;
-  searchValue: string;
+  searchValue: string; // Kept for backward compatibility but not used directly
   locations: ParentLocation[];
   isSubmitting: boolean;
   isCanonical?: boolean;
   onValueChange: (value: string) => void;
-  onSearchChange: (search: string) => void;
+  onSearchChange: (search: string) => void; // Kept for backward compatibility
 }
 
 export function ParentLocationSelector({
   label = "Parent Location",
   helperText,
   value,
-  searchValue,
   locations,
   isSubmitting,
   isCanonical = false,
   onValueChange,
-  onSearchChange,
 }: ParentLocationSelectorProps) {
-  const handleFocus = () => {
-    // Show results when focused, even if search is empty
-    if (!searchValue && locations.length === 0) {
-      onSearchChange(" ");
-    }
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue = e.target.value;
-    onValueChange(newValue);
-    if (newValue) {
-      // Update search to show selected value name
-      const selected = locations.find((loc) => loc.id === newValue);
-      if (selected) {
-        onSearchChange(selected.name);
-      }
-    }
-  };
+  // Convert locations to EasySelect options
+  const options: EasySelectOption<ParentLocation>[] = useMemo(
+    () =>
+      locations.map((loc) => ({
+        value: loc.id,
+        label: loc.name,
+        secondaryText: loc.type,
+        data: loc,
+      })),
+    [locations]
+  );
 
   const defaultHelperText = isCanonical
     ? "Search for a canonical parent location (canonical locations can only have canonical parents)"
     : "Search for a parent location from your accessible locations";
 
   const placeholder = isCanonical
-    ? "Click to search canonical parent locations..."
-    : "Click to search parent locations...";
-
-  const emptyMessage = isCanonical
-    ? "No canonical locations found"
-    : "No locations found";
-
-  const selectPlaceholder = isCanonical
-    ? "Select a canonical parent location..."
-    : "Select a parent location...";
+    ? "Search canonical parent locations..."
+    : "Search parent locations...";
 
   return (
-    <FormGroup
+    <EasySelect
       label={label}
       labelInfo="(optional)"
       helperText={helperText || defaultHelperText}
-    >
-      <InputGroup
-        value={searchValue}
-        onChange={(e) => onSearchChange(e.target.value)}
-        onFocus={handleFocus}
-        placeholder={placeholder}
-        leftIcon="search"
-        disabled={isSubmitting}
-        large
-        fill
-        style={{ marginBottom: spacing.xs }}
-      />
-      {(searchValue || locations.length > 0 || value) && (
-        <HTMLSelect
-          value={value}
-          onChange={handleSelectChange}
-          disabled={isSubmitting}
-          large
-          fill
-        >
-          <option value="">
-            {locations.length > 0 ? selectPlaceholder : emptyMessage}
-          </option>
-          {locations.map((loc) => (
-            <option key={loc.id} value={loc.id}>
-              {loc.name} ({loc.type})
-            </option>
-          ))}
-        </HTMLSelect>
-      )}
-      {value && (
-        <Callout intent={Intent.SUCCESS} style={{ marginTop: spacing.xs }}>
-          {(() => {
-            const selected = locations.find((loc) => loc.id === value);
-            return selected
-              ? `Parent location selected: ${selected.name}`
-              : "Parent location selected";
-          })()}
-        </Callout>
-      )}
-    </FormGroup>
+      value={value}
+      options={options}
+      onValueChange={(newValue) => onValueChange(newValue as string)}
+      disabled={isSubmitting}
+      placeholder={placeholder}
+      fill
+    />
   );
 }

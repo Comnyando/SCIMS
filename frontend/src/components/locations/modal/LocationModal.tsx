@@ -5,17 +5,16 @@
  * Uses Zustand store for state management and handles all submission logic internally.
  */
 
-import React from "react";
+import React, { useMemo } from "react";
 import {
   FormGroup,
   InputGroup,
-  HTMLSelect,
-  TextArea,
   Intent,
   Callout,
   Checkbox,
 } from "@blueprintjs/core";
 import { EntityModal } from "../../common/EntityModal";
+import { EasySelect, type EasySelectOption } from "../../common/EasySelect";
 import { usePublicLocations } from "../../../hooks/queries/commons";
 import { useLocations } from "../../../hooks/queries/locations";
 import {
@@ -29,11 +28,14 @@ import {
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAdmin } from "../../../hooks/useAdmin";
 import { spacing } from "../../../styles/theme";
-import { LocationType, OwnerType } from "../../../types/enums";
+import { LocationType } from "../../../types/enums";
 import { useLocationModalStore } from "../../../stores/locationModalStore";
-import { LOCATION_TYPES, OWNER_TYPES } from "./constants";
+import { LOCATION_TYPES } from "./constants";
 import { ParentLocationSelector } from "./ParentLocationSelector";
 import { CanonicalLocationSelector } from "./CanonicalLocationSelector";
+import { OwnerTypeSelector } from "./OwnerTypeSelector";
+import { ViewEditField } from "../../common/ViewEditField";
+import { MetadataField } from "../../common/MetadataField";
 
 /**
  * Self-contained LocationModal component.
@@ -47,6 +49,7 @@ export function LocationModal() {
   // Get all state and actions from store
   const {
     isOpen,
+    mode,
     location,
     isSubmitting,
     error,
@@ -60,6 +63,7 @@ export function LocationModal() {
     isCanonical,
     metadataJson,
     closeModal,
+    switchToEditMode,
     setName,
     setType,
     setOwnerType,
@@ -72,7 +76,8 @@ export function LocationModal() {
     handleSubmit: storeHandleSubmit,
   } = useLocationModalStore();
 
-  const isEditMode = !!location;
+  const isViewMode = mode === "view";
+  const isEditMode = mode === "edit";
 
   // Mutations for submission
   const createMutation = useCreateLocation();
@@ -223,90 +228,109 @@ export function LocationModal() {
     }
   }
 
+  // Convert location types to EasySelect format
+  const locationTypeOptions: EasySelectOption[] = useMemo(
+    () =>
+      LOCATION_TYPES.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+      })),
+    []
+  );
+
+  const modalTitle = isViewMode
+    ? `View Location: ${location?.name || ""}`
+    : isEditMode
+    ? "Edit Location"
+    : "Create New Location";
+
+  // Determine if user can edit (for view mode)
+  const canEdit = isAdmin || !location?.is_canonical;
+
   return (
     <EntityModal
       isOpen={isOpen}
       onClose={closeModal}
-      title={isEditMode ? "Edit Location" : "Create New Location"}
+      title={modalTitle}
+      mode={mode}
+      onSwitchToEdit={switchToEditMode}
+      canEdit={canEdit}
       submitText={isEditMode ? "Update" : "Create"}
-      onSubmit={handleSubmit}
+      onSubmit={isViewMode ? undefined : handleSubmit}
       isSubmitting={isSubmitting}
       error={error}
       isSubmitDisabled={!validateForm()}
     >
       <div>
         <FormGroup label="Name" labelInfo="(required)">
-          <InputGroup
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter location name"
-            disabled={isSubmitting}
-            fill
+          <ViewEditField
+            isViewMode={isViewMode}
+            viewContent={name}
+            editContent={
+              <InputGroup
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter location name"
+                disabled={isSubmitting}
+                fill
+              />
+            }
           />
         </FormGroup>
 
-        <FormGroup label="Type">
-          <HTMLSelect
+        {isViewMode ? (
+          <FormGroup label="Type">
+            <ViewEditField
+              isViewMode={true}
+              viewContent={
+                LOCATION_TYPES.find((opt) => opt.value === type)?.label || type
+              }
+              editContent={null}
+            />
+          </FormGroup>
+        ) : (
+          <EasySelect
+            label="Type"
             value={type}
-            onChange={(e) => setType(e.target.value as LocationType)}
+            options={locationTypeOptions}
+            onValueChange={(newValue) => setType(newValue as LocationType)}
             disabled={isSubmitting}
-            large
+            placeholder="Select location type..."
             fill
-          >
-            {LOCATION_TYPES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </HTMLSelect>
-        </FormGroup>
+          />
+        )}
 
-        {!isEditMode && (
-          <FormGroup label="Owner Type">
-            <HTMLSelect
-              value={ownerType}
-              onChange={(e) => setOwnerType(e.target.value as OwnerType)}
-              disabled={isSubmitting || isEditMode}
-              large
-              fill
-            >
-              {OWNER_TYPES.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </HTMLSelect>
-            {ownerType === OwnerType.ORGANIZATION && !organizationId && (
-              <Callout
-                intent={Intent.WARNING}
-                style={{ marginTop: spacing.xs }}
-              >
-                No organization selected. This location will be user-owned.
-              </Callout>
-            )}
-            {ownerType === OwnerType.WORLD && (
-              <Callout
-                intent={Intent.PRIMARY}
-                style={{ marginTop: spacing.xs }}
-              >
-                World-owned locations represent universe structures (moons,
-                planets, star systems) and are publicly accessible.
-              </Callout>
-            )}
+        {!isEditMode && !isViewMode && (
+          <OwnerTypeSelector
+            value={ownerType}
+            onChange={setOwnerType}
+            disabled={isSubmitting || isEditMode}
+            organizationId={organizationId}
+          />
+        )}
+
+        {!isViewMode && (
+          <ParentLocationSelector
+            value={parentLocationId || ""}
+            searchValue={parentSearch}
+            locations={parentLocations}
+            isSubmitting={isSubmitting}
+            isCanonical={isEditingCanonical}
+            onValueChange={setParentLocationId}
+            onSearchChange={setParentSearch}
+          />
+        )}
+        {isViewMode && location?.parent_location_name && (
+          <FormGroup label="Parent Location">
+            <ViewEditField
+              isViewMode={true}
+              viewContent={location.parent_location_name}
+              editContent={null}
+            />
           </FormGroup>
         )}
 
-        <ParentLocationSelector
-          value={parentLocationId || ""}
-          searchValue={parentSearch}
-          locations={parentLocations}
-          isSubmitting={isSubmitting}
-          isCanonical={isEditingCanonical}
-          onValueChange={setParentLocationId}
-          onSearchChange={setParentSearch}
-        />
-
-        {isAdmin && !isEditMode && (
+        {isAdmin && !isEditMode && !isViewMode && (
           <FormGroup
             label="Canonical Location"
             helperText="Mark this location as canonical to add it to public commons (admin only)"
@@ -329,7 +353,7 @@ export function LocationModal() {
           </FormGroup>
         )}
 
-        {!isEditingCanonical && (
+        {!isEditingCanonical && !isViewMode && (
           <CanonicalLocationSelector
             value={canonicalLocationId || ""}
             searchValue={canonicalSearch}
@@ -339,45 +363,22 @@ export function LocationModal() {
             onSearchChange={setCanonicalSearch}
           />
         )}
+        {isViewMode && location?.is_canonical && (
+          <FormGroup label="Canonical">
+            <ViewEditField
+              isViewMode={true}
+              viewContent="Yes (Public Commons)"
+              editContent={null}
+            />
+          </FormGroup>
+        )}
 
-        <FormGroup
-          label="Metadata"
-          labelInfo="(optional)"
-          helperText="Additional metadata as JSON. Must be valid JSON format."
-        >
-          <TextArea
-            value={metadataJson}
-            onChange={(e) => setMetadataJson(e.target.value)}
-            placeholder='{"key": "value"}'
-            disabled={isSubmitting}
-            rows={6}
-            fill
-            style={{ fontFamily: "monospace", fontSize: "12px" }}
-          />
-          {metadataJson.trim() &&
-            (() => {
-              try {
-                JSON.parse(metadataJson);
-                return (
-                  <Callout
-                    intent={Intent.SUCCESS}
-                    style={{ marginTop: spacing.xs }}
-                  >
-                    Valid JSON
-                  </Callout>
-                );
-              } catch {
-                return (
-                  <Callout
-                    intent={Intent.DANGER}
-                    style={{ marginTop: spacing.xs }}
-                  >
-                    Invalid JSON format
-                  </Callout>
-                );
-              }
-            })()}
-        </FormGroup>
+        <MetadataField
+          isViewMode={isViewMode}
+          value={metadataJson}
+          onChange={setMetadataJson}
+          disabled={isSubmitting}
+        />
       </div>
     </EntityModal>
   );

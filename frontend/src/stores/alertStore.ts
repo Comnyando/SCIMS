@@ -9,7 +9,7 @@ import { Intent } from "@blueprintjs/core";
 export interface AlertState {
   isOpen: boolean;
   title: string;
-  message: string;
+  message: string | null;
   intent: Intent;
   confirmText?: string;
   cancelText?: string;
@@ -24,14 +24,14 @@ interface AlertStore {
   // Actions
   showAlert: (config: {
     title: string;
-    message: string;
+    message?: string;
     intent?: Intent;
     confirmText?: string;
   }) => Promise<void>;
 
   showConfirm: (config: {
     title: string;
-    message: string;
+    message?: string;
     intent?: Intent;
     confirmText?: string;
     cancelText?: string;
@@ -45,7 +45,7 @@ interface AlertStore {
 const initialAlertState: AlertState = {
   isOpen: false,
   title: "",
-  message: "",
+  message: null,
   intent: Intent.PRIMARY,
   confirmText: "OK",
   cancelText: "Cancel",
@@ -60,7 +60,7 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
         alert: {
           isOpen: true,
           title: config.title,
-          message: config.message,
+          message: config.message || null,
           intent: config.intent || Intent.PRIMARY,
           confirmText: config.confirmText || "OK",
           onConfirm: () => {
@@ -78,7 +78,7 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
         alert: {
           isOpen: true,
           title: config.title,
-          message: config.message,
+          message: config.message || null,
           intent: config.intent || Intent.WARNING,
           confirmText: config.confirmText || "Confirm",
           cancelText: config.cancelText || "Cancel",

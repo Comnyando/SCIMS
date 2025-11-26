@@ -3,9 +3,17 @@
  */
 
 import { useState } from "react";
-import { InputGroup, H1, Callout, Intent, Spinner } from "@blueprintjs/core";
+import {
+  InputGroup,
+  H1,
+  Callout,
+  Intent,
+  Spinner,
+  Button,
+} from "@blueprintjs/core";
 import DashboardLayout from "../components/DashboardLayout";
 import { useInventory } from "../hooks/queries/inventory";
+import { useInventoryModalStore } from "../stores/inventoryModalStore";
 import DataTable from "../components/common/DataTable";
 import Pagination from "../components/common/Pagination";
 import { pageHeader, filterRow, sectionSpacing } from "../styles/common";
@@ -13,6 +21,14 @@ import { spacing, colors, typography } from "../styles/theme";
 import type { InventoryStock } from "../types";
 
 export default function InventoryPage() {
+  const openViewModal = useInventoryModalStore((state) => state.openViewModal);
+  const openAdjustModal = useInventoryModalStore(
+    (state) => state.openAdjustModal
+  );
+  const openTransferModal = useInventoryModalStore(
+    (state) => state.openTransferModal
+  );
+
   const [skip, setSkip] = useState(0);
   const [limit] = useState(50);
   const [search, setSearch] = useState("");
@@ -42,15 +58,39 @@ export default function InventoryPage() {
     setSkip(0);
   };
 
+  const handleStockClick = (stock: InventoryStock) => {
+    openViewModal(stock);
+  };
+
+  const handleAdjustClick = (e: React.MouseEvent, stock: InventoryStock) => {
+    e.stopPropagation();
+    openAdjustModal(stock);
+  };
+
+  const handleTransferClick = (e: React.MouseEvent, stock: InventoryStock) => {
+    e.stopPropagation();
+    openTransferModal(stock);
+  };
+
   const columns = [
     {
       key: "item",
       label: "Item",
       render: (stock: InventoryStock) => (
         <div>
-          <strong>{stock.item_name}</strong>
+          <strong
+            style={{ cursor: "pointer" }}
+            onClick={() => handleStockClick(stock)}
+          >
+            {stock.item_name}
+          </strong>
           {stock.item_category && (
-            <div style={{ fontSize: typography.fontSize.sm, color: colors.text.secondary }}>
+            <div
+              style={{
+                fontSize: typography.fontSize.sm,
+                color: colors.text.secondary,
+              }}
+            >
               {stock.item_category}
             </div>
           )}
@@ -63,7 +103,12 @@ export default function InventoryPage() {
       render: (stock: InventoryStock) => (
         <div>
           <strong>{stock.location_name}</strong>
-          <div style={{ fontSize: typography.fontSize.sm, color: colors.text.secondary }}>
+          <div
+            style={{
+              fontSize: typography.fontSize.sm,
+              color: colors.text.secondary,
+            }}
+          >
             {stock.location_type}
           </div>
         </div>
@@ -80,7 +125,7 @@ export default function InventoryPage() {
       label: "Reserved",
       align: "right" as const,
       render: (stock: InventoryStock) => (
-        <span style={{ color: "#FF9800" }}>{stock.reserved_quantity}</span>
+        <span style={{ color: "#D9822B" }}>{stock.reserved_quantity}</span>
       ),
     },
     {
@@ -88,7 +133,7 @@ export default function InventoryPage() {
       label: "Available",
       align: "right" as const,
       render: (stock: InventoryStock) => (
-        <span style={{ color: "#4CAF50" }}>{stock.available_quantity}</span>
+        <span style={{ color: "#0F9960" }}>{stock.available_quantity}</span>
       ),
     },
     {
@@ -96,14 +141,53 @@ export default function InventoryPage() {
       label: "Last Updated",
       render: (stock: InventoryStock) => (
         <div>
-          <div style={{ fontSize: typography.fontSize.sm, color: colors.text.secondary }}>
+          <div
+            style={{
+              fontSize: typography.fontSize.sm,
+              color: colors.text.secondary,
+            }}
+          >
             {new Date(stock.last_updated).toLocaleString()}
           </div>
           {stock.updated_by_username && (
-            <div style={{ fontSize: typography.fontSize.xs, color: colors.text.muted }}>
+            <div
+              style={{
+                fontSize: typography.fontSize.xs,
+                color: colors.text.muted,
+              }}
+            >
               by {stock.updated_by_username}
             </div>
           )}
+        </div>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (stock: InventoryStock) => (
+        <div style={{ display: "flex", gap: spacing.xs }}>
+          <Button
+            small
+            icon="eye-open"
+            text="View"
+            onClick={() => handleStockClick(stock)}
+            intent={Intent.PRIMARY}
+          />
+          <Button
+            small
+            icon="edit"
+            text="Adjust"
+            onClick={(e) => handleAdjustClick(e, stock)}
+            intent={Intent.WARNING}
+          />
+          <Button
+            small
+            icon="swap-horizontal"
+            text="Transfer"
+            onClick={(e) => handleTransferClick(e, stock)}
+            intent={Intent.PRIMARY}
+          />
         </div>
       ),
     },
@@ -183,4 +267,3 @@ export default function InventoryPage() {
     </DashboardLayout>
   );
 }
-

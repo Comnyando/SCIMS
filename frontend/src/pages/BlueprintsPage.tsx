@@ -3,7 +3,6 @@
  */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   InputGroup,
   H1,
@@ -16,6 +15,7 @@ import {
 } from "@blueprintjs/core";
 import DashboardLayout from "../components/DashboardLayout";
 import { useBlueprints } from "../hooks/queries/blueprints";
+import { useBlueprintModalStore } from "../stores/blueprintModalStore";
 import DataTable from "../components/common/DataTable";
 import Pagination from "../components/common/Pagination";
 import { pageHeader, filterRow, sectionSpacing } from "../styles/common";
@@ -23,7 +23,12 @@ import { spacing, colors } from "../styles/theme";
 import type { Blueprint } from "../types";
 
 export default function BlueprintsPage() {
-  const navigate = useNavigate();
+  const openCreateModal = useBlueprintModalStore(
+    (state) => state.openCreateModal
+  );
+  const openViewModal = useBlueprintModalStore((state) => state.openViewModal);
+  const openEditModal = useBlueprintModalStore((state) => state.openEditModal);
+
   const [skip, setSkip] = useState(0);
   const [limit] = useState(50);
   const [search, setSearch] = useState("");
@@ -68,7 +73,12 @@ export default function BlueprintsPage() {
   };
 
   const handleBlueprintClick = (blueprint: Blueprint) => {
-    navigate(`/blueprints/${blueprint.id}`);
+    openViewModal(blueprint);
+  };
+
+  const handleEditClick = (e: React.MouseEvent, blueprint: Blueprint) => {
+    e.stopPropagation();
+    openEditModal(blueprint);
   };
 
   const columns = [
@@ -126,6 +136,28 @@ export default function BlueprintsPage() {
       label: "Used",
       render: (blueprint: Blueprint) => blueprint.usage_count || 0,
     },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (blueprint: Blueprint) => (
+        <div style={{ display: "flex", gap: spacing.xs }}>
+          <Button
+            size="small"
+            icon="eye-open"
+            text="View"
+            onClick={() => handleBlueprintClick(blueprint)}
+            intent={Intent.PRIMARY}
+          />
+          <Button
+            size="small"
+            icon="edit"
+            text="Edit"
+            onClick={(e) => handleEditClick(e, blueprint)}
+            intent={Intent.PRIMARY}
+          />
+        </div>
+      ),
+    },
   ];
 
   const currentPage = Math.floor(skip / limit) + 1;
@@ -146,7 +178,7 @@ export default function BlueprintsPage() {
           icon="plus"
           text="Create Blueprint"
           intent="primary"
-          onClick={() => navigate("/blueprints/new")}
+          onClick={() => openCreateModal()}
         />
       </div>
 

@@ -3,7 +3,6 @@
  */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   H1,
   Callout,
@@ -15,6 +14,7 @@ import {
 } from "@blueprintjs/core";
 import DashboardLayout from "../components/DashboardLayout";
 import { useCrafts } from "../hooks/queries/crafts";
+import { useCraftModalStore } from "../stores/craftModalStore";
 import DataTable from "../components/common/DataTable";
 import Pagination from "../components/common/Pagination";
 import { pageHeader, filterRow, sectionSpacing } from "../styles/common";
@@ -35,7 +35,10 @@ function formatDate(dateString: string | null): string {
 }
 
 export default function CraftsPage() {
-  const navigate = useNavigate();
+  const openCreateModal = useCraftModalStore((state) => state.openCreateModal);
+  const openViewModal = useCraftModalStore((state) => state.openViewModal);
+  const openEditModal = useCraftModalStore((state) => state.openEditModal);
+
   const [skip, setSkip] = useState(0);
   const [limit] = useState(50);
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -66,7 +69,12 @@ export default function CraftsPage() {
   };
 
   const handleCraftClick = (craft: Craft) => {
-    navigate(`/crafts/${craft.id}`);
+    openViewModal(craft);
+  };
+
+  const handleEditClick = (e: React.MouseEvent, craft: Craft) => {
+    e.stopPropagation();
+    openEditModal(craft);
   };
 
   const columns = [
@@ -139,6 +147,36 @@ export default function CraftsPage() {
       label: "Output Location",
       render: (craft: Craft) => craft.output_location?.name || "-",
     },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (craft: Craft) => (
+        <div style={{ display: "flex", gap: spacing.xs }}>
+          <Button
+            size="small"
+            icon="eye-open"
+            text="View"
+            onClick={() => handleCraftClick(craft)}
+            intent={Intent.PRIMARY}
+          />
+          <Button
+            size="small"
+            icon="edit"
+            text="Edit"
+            onClick={(e) => handleEditClick(e, craft)}
+            intent={Intent.PRIMARY}
+            disabled={
+              craft.status === "completed" || craft.status === "cancelled"
+            }
+            title={
+              craft.status === "completed" || craft.status === "cancelled"
+                ? "Cannot edit completed or cancelled crafts"
+                : undefined
+            }
+          />
+        </div>
+      ),
+    },
   ];
 
   const currentPage = Math.floor(skip / limit) + 1;
@@ -162,7 +200,7 @@ export default function CraftsPage() {
           text="Create Craft"
           intent="primary"
           data-tour="create-craft-button"
-          onClick={() => navigate("/crafts/new")}
+          onClick={() => openCreateModal()}
         />
       </div>
 
